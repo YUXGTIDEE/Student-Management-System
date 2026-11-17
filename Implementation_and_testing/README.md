@@ -41,9 +41,7 @@ python manage.py runserver
 Windows không cài được `mysqlclient`: đổi dòng đó trong `requirements.txt` thành `pymysql` (settings đã tự nhận).
 
 ## Quy ước chung
-- Nhánh: `feature/<module>-<mô-tả>`; không push thẳng `main`; mỗi PR cần 1 người review; merge mỗi ngày.
 - **Chỉ BE1 sửa model và migration.** Cần thêm cột thì nhắn BE1.
-- Lỗi nghiệp vụ: `raise ServiceError(ErrorCode.X, "thông báo")`. View bắt lỗi và hiển thị đúng thông báo trong GUI.
 - Mọi view phải có `@role_required(...)`; **kiểm tra quyền ở server**, không chỉ ẩn nút ở giao diện.
 - Số lượng chỗ (`current_enrollment`) chỉ cập nhật bằng câu lệnh nguyên tử trong transaction.
 
