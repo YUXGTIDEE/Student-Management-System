@@ -1,0 +1,19 @@
+name: CI
+on: [pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env: {MYSQL_ROOT_PASSWORD: root, MYSQL_DATABASE: student_mgmt}
+        ports: ["3306:3306"]
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-retries=10
+    env: {DB_NAME: student_mgmt, DB_USER: root, DB_PASSWORD: root, DB_HOST: 127.0.0.1}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python manage.py makemigrations --check --dry-run
+      - run: pytest

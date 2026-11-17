@@ -1,0 +1,16 @@
+{# templates/common/base.html  (Phụ trách: FE2) - layout chung, sidebar theo role, khối người dùng + Log out.
+   Mọi template khác phải {% extends "common/base.html" %}. FE1, FE3 chỉ viết trong {% block content %}. #}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Student Management System{% endblock %}</title>
+  <!-- TODO (FE2): Bootstrap CDN, CSS chung -->
+</head>
+<body>
+  <!-- TODO (FE2): sidebar theo request.user.role (Student / Teacher / Administrator), nút Log out -->
+  {% if messages %}{% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}{% endif %}
+  {% block content %}{% endblock %}
+</body>
+</html>
