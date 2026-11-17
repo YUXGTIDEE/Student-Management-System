@@ -1,5 +1,5 @@
 """
-search/views.py  (Backend: BE1   Frontend: FE2)
+search/views.py  (Backend: Bình   Frontend: Đạt)
 
 View khung: chưa cài thì hiện trang "[CHƯA CÀI ĐẶT] tên_view". Khi làm:
  1. BE gọi hàm trong services.py, bắt ServiceError, truyền dữ liệu vào template (context theo docs/api/search.md).
@@ -19,7 +19,7 @@ def _stub(name):
 def student_search_view(request, **kwargs):
     """GV 4.1 / Admin tìm kiếm + lọc (UC 12, 22)
     Template: search/student_search.html"""
-    # TODO (BE1): cài đặt
+    # TODO (Bình): cài đặt
     return _stub("student_search_view")
 
 
@@ -27,7 +27,7 @@ def student_search_view(request, **kwargs):
 def student_detail_view(request, **kwargs):
     """GV 4.2 hồ sơ chi tiết chỉ đọc (UC 13)
     Template: search/student_detail.html"""
-    # TODO (BE1): cài đặt
+    # TODO (Bình): cài đặt
     return _stub("student_detail_view")
 
 
@@ -35,5 +35,5 @@ def student_detail_view(request, **kwargs):
 def assigned_sections_view(request, **kwargs):
     """GV 4.3 danh sách được phân công (UC 11)
     Template: search/assigned.html"""
-    # TODO (BE1): cài đặt
+    # TODO (Bình): cài đặt
     return _stub("assigned_sections_view")

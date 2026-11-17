@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.urls import include, path
 
 urlpatterns = [
-    path("", lambda r: redirect("accounts:login_view")),   # TODO (BE1/FE2): trang chủ theo role
+    path("", lambda r: redirect("accounts:login_view")),   # TODO (Binh/Huy): trang chủ theo role
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
     path("students/", include("students.urls")),

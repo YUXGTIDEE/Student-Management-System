@@ -1,4 +1,4 @@
-"""config/settings.py (BE1). Cấu hình đọc từ biến môi trường (.env)."""
+"""config/settings.py (Hoa Binh). Cấu hình đọc từ biến môi trường (.env)."""
 import os
 from pathlib import Path
 

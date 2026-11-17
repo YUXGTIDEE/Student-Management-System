@@ -1,4 +1,4 @@
-"""common/pagination.py (BE1) - phân trang dùng chung."""
+"""common/pagination.py (Hoa Binh) - phân trang dùng chung."""
 from .contract import Page, not_implemented
 
 

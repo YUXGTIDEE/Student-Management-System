@@ -1,4 +1,4 @@
-"""accounts/models.py  (Phụ trách: BE1 - chỉ BE1 được sửa model/migration)"""
+"""accounts/models.py  (Phụ trách: Binh - chỉ BE1 được sửa model/migration)"""
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from common.contract import Role, ResetStatus

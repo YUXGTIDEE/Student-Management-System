@@ -1,4 +1,4 @@
-"""registration/models.py (model do BE1 chốt; nghiệp vụ do BE3 viết)"""
+"""registration/models.py (model do Bình chốt; nghiệp vụ do Duy viết)"""
 from django.db import models
 from common.contract import EnrollmentStatus
 

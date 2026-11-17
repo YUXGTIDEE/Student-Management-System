@@ -1,5 +1,5 @@
 """
-common/permissions.py  (Phụ trách: BE1)  - decorator phân quyền dùng cho MỌI view.
+common/permissions.py  (Phụ trách: Hoa Binh)  - decorator phân quyền dùng cho MỌI view.
 Ví dụ:
     @role_required(Role.ADMINISTRATOR)
     def accounts_list(request): ...
@@ -16,17 +16,17 @@ def role_required(*roles):
         @login_required
         @wraps(view)
         def wrapper(request, *args, **kwargs):
-            # TODO (BE1): kiểm tra request.user.role in roles, sai thì HttpResponseForbidden
+            # TODO (Hoa Binh): kiểm tra request.user.role in roles, sai thì HttpResponseForbidden
             not_implemented("role_required")
         return wrapper
     return decorator
 
 
 def teacher_teaches_section(teacher_user, section):
-    """True nếu giáo viên được phân công section này. BE1 cài, BE3 và BE2 dùng."""
+    """True nếu giáo viên được phân công section này. Hoa Binh cài, Duy và Minh dùng."""
     not_implemented("teacher_teaches_section")
 
 
 def teacher_can_see_student(teacher_user, student):
-    """True nếu student có Enrollment REGISTERED trong section của giáo viên. BE1 cài."""
+    """True nếu student có Enrollment REGISTERED trong section của giáo viên. Binh cài."""
     not_implemented("teacher_can_see_student")

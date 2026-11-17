@@ -1,4 +1,4 @@
-"""students/models.py (model do BE1 chốt; nghiệp vụ do BE2 viết)"""
+"""students/models.py (model do Bình chốt; nghiệp vụ do Minh viết)"""
 from django.conf import settings
 from django.db import models
 from common.contract import AcademicStatus, Gender

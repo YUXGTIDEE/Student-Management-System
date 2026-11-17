@@ -1,4 +1,4 @@
-"""courses/services.py  (Phụ trách: BE2)   UC: 6 (xem section), 26, 27, 28 (xem DS sinh viên của section)"""
+"""courses/services.py  (Phụ trách: Minh)   UC: 6 (xem section), 26, 27, 28 (xem DS sinh viên của section)"""
 from common.contract import not_implemented
 
 

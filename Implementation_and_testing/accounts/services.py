@@ -1,5 +1,5 @@
 """
-accounts/services.py  (Phụ trách: BE1)   UC: 1, 2, 3, 4, 5, 19, 20, 21
+accounts/services.py  (Phụ trách: Binh)   UC: 1, 2, 3, 4, 5, 19, 20, 21
 Chữ ký hàm là HỢP ĐỒNG với FE và BE khác. Lỗi nghiệp vụ -> raise ServiceError(ErrorCode.X, "...").
 """
 from common.contract import not_implemented

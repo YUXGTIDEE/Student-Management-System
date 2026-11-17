@@ -1,5 +1,5 @@
 """
-common/contract.py - HỢP ĐỒNG CHUNG CỦA NHÓM  (Phụ trách: BE1)
+common/contract.py - HỢP ĐỒNG CHUNG CỦA NHÓM  (Phụ trách: Hoa Binh)
 
 
  - Đây là "hợp đồng" chung. Mỗi người chỉ cài đặt phần của mình,
@@ -33,7 +33,7 @@ class AcademicStatus:
         (TEMPORARILY_SUSPENDED, "Temporarily Suspended"),
         (GRADUATED, "Graduated"),
     ]
-    # Quy tắc đổi trạng thái hợp lệ (xem DECISIONS.md mục 6). BE2 dùng trong UC Edit academic status.
+    # Quy tắc đổi trạng thái hợp lệ (xem DECISIONS.md mục 6). Minh dùng trong UC Edit academic status.
     VALID_TRANSITIONS = {
         ENROLLED: {WITHDRAWN, TEMPORARILY_SUSPENDED, GRADUATED},
         TEMPORARILY_SUSPENDED: {ENROLLED, WITHDRAWN},

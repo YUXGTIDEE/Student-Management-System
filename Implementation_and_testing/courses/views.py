@@ -1,5 +1,5 @@
 """
-courses/views.py  (Backend: BE2   Frontend: FE3 (Admin) + FE1/FE2 (xem section))
+courses/views.py  (Backend: Minh   Frontend: Thành (Admin) + Huy/Đạt (xem section))
 
 View khung: chưa cài thì hiện trang "[CHƯA CÀI ĐẶT] tên_view". Khi làm:
  1. BE gọi hàm trong services.py, bắt ServiceError, truyền dữ liệu vào template (context theo docs/api/courses.md).

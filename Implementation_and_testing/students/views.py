@@ -1,5 +1,5 @@
 """
-students/views.py  (Backend: BE2   Frontend: FE3)
+students/views.py  (Backend: Minh   Frontend: Thành)
 
 View khung: chưa cài thì hiện trang "[CHƯA CÀI ĐẶT] tên_view". Khi làm:
  1. BE gọi hàm trong services.py, bắt ServiceError, truyền dữ liệu vào template (context theo docs/api/students.md).
@@ -19,7 +19,7 @@ def _stub(name):
 def student_list_view(request, **kwargs):
     """Admin 5.3 danh sách hồ sơ (UC 23)
     Template: students/student_list.html"""
-    # TODO (BE2): cài đặt
+    # TODO (Minh): cài đặt
     return _stub("student_list_view")
 
 
@@ -27,7 +27,7 @@ def student_list_view(request, **kwargs):
 def student_create_view(request, **kwargs):
     """Admin 5.3 thêm hồ sơ (UC 23)
     Template: students/student_form.html"""
-    # TODO (BE2): cài đặt
+    # TODO (Minh): cài đặt
     return _stub("student_create_view")
 
 
@@ -35,7 +35,7 @@ def student_create_view(request, **kwargs):
 def student_edit_view(request, **kwargs):
     """Admin 5.3 sửa hồ sơ (UC 24)
     Template: students/student_form.html"""
-    # TODO (BE2): cài đặt
+    # TODO (Minh): cài đặt
     return _stub("student_edit_view")
 
 
@@ -43,5 +43,5 @@ def student_edit_view(request, **kwargs):
 def student_status_view(request, **kwargs):
     """POST đổi trạng thái học tập (UC 25)
     Template: (không có - POST rồi redirect)"""
-    # TODO (BE2): cài đặt
+    # TODO (Minh): cài đặt
     return _stub("student_status_view")

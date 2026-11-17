@@ -1,5 +1,5 @@
 """
-grades/calculator.py  (Phụ trách: BE3)   HÀM THUẦN, KHÔNG đụng database -> dễ unit test.
+grades/calculator.py  (Phụ trách: Duy)   HÀM THUẦN, KHÔNG đụng database -> dễ unit test.
 Công thức và bảng quy đổi lấy từ common/contract.py.
 """
 from decimal import Decimal

@@ -1,5 +1,5 @@
 """
-accounts/views.py  (Backend: BE1   Frontend: FE2 (Login/Reset) + FE1 (Student) + FE3 (Admin))
+accounts/views.py  (Backend: Binh   Frontend: Huy (Login/Reset) + Đạt (Student) + Thành (Admin))
 
 View khung: chưa cài thì hiện trang "[CHƯA CÀI ĐẶT] tên_view". Khi làm:
  1. BE gọi hàm trong services.py, bắt ServiceError, truyền dữ liệu vào template (context theo docs/api/accounts.md).

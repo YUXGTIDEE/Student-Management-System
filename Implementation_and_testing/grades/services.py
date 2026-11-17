@@ -1,4 +1,4 @@
-"""grades/services.py  (Phụ trách: BE3)   UC: 10, 14, 15, 16, 17, 18 (theo SRS: xem điểm, nhập/sửa, khóa, mở khóa)"""
+"""grades/services.py  (Phụ trách: Duy)   UC: 10, 14, 15, 16, 17, 18 (theo SRS: xem điểm, nhập/sửa, khóa, mở khóa)"""
 from common.contract import not_implemented
 
 

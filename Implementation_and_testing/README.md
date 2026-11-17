@@ -41,7 +41,7 @@ python manage.py runserver
 Windows không cài được `mysqlclient`: đổi dòng đó trong `requirements.txt` thành `pymysql` (settings đã tự nhận).
 
 ## Quy ước chung
-- **Chỉ BE1 sửa model và migration.** Cần thêm cột thì nhắn BE1.
+- **Chỉ Hoa Binh sửa model và migration.** Cần thêm cột thì nhắn Hoa Binh.
 - Mọi view phải có `@role_required(...)`; **kiểm tra quyền ở server**, không chỉ ẩn nút ở giao diện.
 - Số lượng chỗ (`current_enrollment`) chỉ cập nhật bằng câu lệnh nguyên tử trong transaction.
 

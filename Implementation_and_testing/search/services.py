@@ -1,4 +1,4 @@
-"""search/services.py  (Phụ trách: BE1)   UC: 11, 12, 13, 22"""
+"""search/services.py  (Phụ trách: Bình)   UC: 11, 12, 13, 22"""
 from common.contract import not_implemented
 
 

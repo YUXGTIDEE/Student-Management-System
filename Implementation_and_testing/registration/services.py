@@ -1,4 +1,4 @@
-"""registration/services.py  (Phụ trách: BE3)   UC: 7, 8, 9 (đánh số theo SRS: 6-9 phía sinh viên)"""
+"""registration/services.py  (Phụ trách: Duy)   UC: 7, 8, 9 (đánh số theo SRS: 6-9 phía sinh viên)"""
 from common.contract import not_implemented
 
 

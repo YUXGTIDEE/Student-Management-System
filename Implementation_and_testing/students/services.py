@@ -1,4 +1,4 @@
-"""students/services.py  (Phụ trách: BE2)   UC: 23, 24, 25"""
+"""students/services.py  (Phụ trách: Minh)   UC: 23, 24, 25"""
 from common.contract import not_implemented
 
 

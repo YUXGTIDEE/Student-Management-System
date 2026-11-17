@@ -1,4 +1,4 @@
-"""grades/models.py (model do BE1 chốt; nghiệp vụ do BE3 viết)"""
+"""grades/models.py (model do Bình chốt; nghiệp vụ do Duy viết)"""
 from django.conf import settings
 from django.db import models
 from common.contract import LetterGrade

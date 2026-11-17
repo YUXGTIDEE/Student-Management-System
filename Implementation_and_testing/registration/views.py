@@ -1,5 +1,5 @@
 """
-registration/views.py  (Backend: BE3   Frontend: FE1)
+registration/views.py  (Backend: Duy   Frontend: Đạt)
 
 View khung: chưa cài thì hiện trang "[CHƯA CÀI ĐẶT] tên_view". Khi làm:
  1. BE gọi hàm trong services.py, bắt ServiceError, truyền dữ liệu vào template (context theo docs/api/registration.md).
@@ -19,7 +19,7 @@ def _stub(name):
 def open_sections_view(request, **kwargs):
     """SV 3.3 section mở (UC 6)
     Template: registration/open_sections.html"""
-    # TODO (BE3): cài đặt
+    # TODO (Duy): cài đặt
     return _stub("open_sections_view")
 
 
@@ -27,7 +27,7 @@ def open_sections_view(request, **kwargs):
 def register_confirm_view(request, **kwargs):
     """SV 3.4 dialog xác nhận, gọi validate_registration (UC 7)
     Template: registration/confirm.html"""
-    # TODO (BE3): cài đặt
+    # TODO (Duy): cài đặt
     return _stub("register_confirm_view")
 
 
@@ -35,7 +35,7 @@ def register_confirm_view(request, **kwargs):
 def register_view(request, **kwargs):
     """POST đăng ký (UC 7)
     Template: (không có - POST rồi redirect)"""
-    # TODO (BE3): cài đặt
+    # TODO (Duy): cài đặt
     return _stub("register_view")
 
 
@@ -43,7 +43,7 @@ def register_view(request, **kwargs):
 def registered_sections_view(request, **kwargs):
     """SV 3.5 đã đăng ký (UC 8)
     Template: registration/registered.html"""
-    # TODO (BE3): cài đặt
+    # TODO (Duy): cài đặt
     return _stub("registered_sections_view")
 
 
@@ -51,5 +51,5 @@ def registered_sections_view(request, **kwargs):
 def cancel_view(request, **kwargs):
     """POST hủy đăng ký (UC 9)
     Template: (không có - POST rồi redirect)"""
-    # TODO (BE3): cài đặt
+    # TODO (Duy): cài đặt
     return _stub("cancel_view")

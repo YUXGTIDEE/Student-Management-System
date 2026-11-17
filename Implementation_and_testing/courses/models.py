@@ -1,4 +1,4 @@
-"""courses/models.py (model do BE1 chốt; nghiệp vụ do BE2 viết)"""
+"""courses/models.py (model do Binh chốt; nghiệp vụ do Minh viết)"""
 from django.conf import settings
 from django.db import models
 
