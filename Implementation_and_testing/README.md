@@ -5,15 +5,15 @@
 | Thư mục / file | Backend | Frontend | Trạng thái |
 |---|---|---|---|
 | `common/contract.py` | **Cả nhóm** (hợp đồng chung, **không tự ý sửa**) | | Đã chốt |
-| `common/permissions.py`, `common/pagination.py` | BE1 | | File khung (TODO) |
-| `config/`, `*/models.py`, migration, seed | **BE1** (chỉ BE1 sửa) | | Models đã viết, migration chưa tạo |
-| `accounts/` (đăng nhập, hồ sơ, tài khoản) | BE1 | FE2: Login/Reset · FE1: hồ sơ SV · FE3: 5.1, 5.2 | File khung (TODO) |
-| `search/` (tìm kiếm, lọc, hồ sơ chi tiết, DS phân công) | BE1 | FE2: 4.1, 4.2, 4.3 | File khung (TODO) |
-| `students/` (hồ sơ SV, trạng thái học tập) | BE2 | FE3: 5.3 | File khung (TODO) |
-| `courses/` (course, section, trùng lịch) | BE2 | FE3: 5.4, 5.5, 5.6 | File khung (TODO) |
-| `registration/` (đăng ký, hủy) | BE3 | FE1: 3.3 – 3.6 | File khung (TODO) |
-| `grades/` (nhập điểm, tính điểm, khóa/mở khóa, xem điểm) | BE3 | FE2: 4.4, 4.5 · FE3: 5.7 · FE1: 3.7 | File khung (TODO) |
-| `templates/common/` (layout, sidebar, component) | | **FE2**  | File khung (TODO) |
+| `common/permissions.py`, `common/pagination.py` | Bình | | File khung (TODO) |
+| `config/`, `*/models.py`, migration, seed | **Bình** (chỉ Bình sửa) | | Models đã viết, migration chưa tạo |
+| `accounts/` (đăng nhập, hồ sơ, tài khoản) | Bình | Đạt: Login/Reset · Huy: hồ sơ SV · Thành: 5.1, 5.2 | File khung (TODO) |
+| `search/` (tìm kiếm, lọc, hồ sơ chi tiết, DS phân công) | Bình | Đạt: 4.1, 4.2, 4.3 | File khung (TODO) |
+| `students/` (hồ sơ SV, trạng thái học tập) | Minh | Thành: 5.3 | File khung (TODO) |
+| `courses/` (course, section, trùng lịch) | Minh | Thành: 5.4, 5.5, 5.6 | File khung (TODO) |
+| `registration/` (đăng ký, hủy) | Duy | Huy: 3.3 – 3.6 | File khung (TODO) |
+| `grades/` (nhập điểm, tính điểm, khóa/mở khóa, xem điểm) | Duy | Đạt: 4.4, 4.5 · Thành: 5.7 · Huy: 3.7 | File khung (TODO) |
+| `templates/common/` (layout, sidebar, component) | | **Đạt**  | File khung (TODO) |
 | `docs/api/*.md` | cặp BE–FE cùng viết 
 | Test case, test tải, test đồng thời | Giai đoạn 2: test chéo (xem `docs/TEST_PLAN.md`) | | – |
 
