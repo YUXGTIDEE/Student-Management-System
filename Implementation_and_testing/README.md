@@ -46,5 +46,5 @@ Windows không cài được `mysqlclient`: đổi dòng đó trong `requirement
 - Lỗi nghiệp vụ: `raise ServiceError(ErrorCode.X, "thông báo")`. View bắt lỗi và hiển thị đúng thông báo trong GUI.
 - Mọi view phải có `@role_required(...)`; **kiểm tra quyền ở server**, không chỉ ẩn nút ở giao diện.
 - Số lượng chỗ (`current_enrollment`) chỉ cập nhật bằng câu lệnh nguyên tử trong transaction.
-- Mã sinh viên: 6 chữ số, lưu chuỗi. Mã GV `GV001`, Admin `AD001`.
+
 
