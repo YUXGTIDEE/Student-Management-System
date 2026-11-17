@@ -2,7 +2,9 @@
 import os
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent 
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
 DEBUG = os.environ.get("DEBUG", "1") == "1"
 ALLOWED_HOSTS = ["*"]
@@ -49,7 +51,7 @@ DATABASES = {"default": {
     "USER": os.environ.get("DB_USER", "sms_user"),
     "PASSWORD": os.environ.get("DB_PASSWORD", ""),
     "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
-    "PORT": os.environ.get("DB_PORT", "3306"),
+    "PORT": os.environ.get("DB_PORT", "3307"),
     "OPTIONS": {"charset": "utf8mb4"},
 }}
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.PBKDF2PasswordHasher"]  # mật khẩu lưu dạng băm

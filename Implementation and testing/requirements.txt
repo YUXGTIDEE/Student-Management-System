@@ -1,5 +1,0 @@
-Django>=5.0,<5.3
-mysqlclient>=2.2        # Windows lỗi cài: đổi thành pymysql
-pytest
-pytest-django
-locust
