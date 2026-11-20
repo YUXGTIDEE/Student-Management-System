@@ -1,1 +1,50 @@
-{# templates/common/components/badge.html (Đạt): component dùng chung - TODO #}
+
+{% comment %}
+  templates/common/components/badge.html  (Đạt)  – nhãn nhỏ có màu cho một giá trị trạng thái (Bootstrap 5.2+).
+
+  Cách dùng:
+    {% include "common/components/badge.html" with kind="status"     value=s.academic_status %}
+    {% include "common/components/badge.html" with kind="role"       value=u.role %}
+    {% include "common/components/badge.html" with kind="account"    value=u.is_locked %}
+    {% include "common/components/badge.html" with kind="enrollment" value=e.status %}
+    {% include "common/components/badge.html" with kind="grade"      value=row.letter_grade %}
+
+  kind        giá trị nhận vào                                 hiển thị
+  status      ENROLLED / WITHDRAWN / TEMPORARILY_SUSPENDED / GRADUATED   Enrolled, Withdrawn, Temporarily suspended, Graduated
+  role        STUDENT / TEACHER / ADMINISTRATOR                Student, Teacher, Administrator
+  account     is_locked (True / False)                         Locked / Active
+  enrollment  REGISTERED / CANCELLED                           Registered, Cancelled
+  grade       A / B / C / D / F                                chính chữ đó
+
+  Giá trị rỗng (None, "") hiển thị dấu "–"  (ví dụ chưa có điểm chữ).
+  Giá trị lạ (không có trong bảng) được in nguyên văn với màu xám, không làm vỡ trang.
+{% endcomment %}
+{% if kind == "account" %}
+  {% if value %}<span class="badge text-bg-danger">Locked</span>{% else %}<span class="badge text-bg-success">Active</span>{% endif %}
+{% elif not value %}
+  <span class="text-muted">–</span>
+{% elif kind == "status" %}
+  {% if value == "ENROLLED" %}<span class="badge text-bg-success">Enrolled</span>
+  {% elif value == "WITHDRAWN" %}<span class="badge text-bg-danger">Withdrawn</span>
+  {% elif value == "TEMPORARILY_SUSPENDED" %}<span class="badge text-bg-warning">Temporarily suspended</span>
+  {% elif value == "GRADUATED" %}<span class="badge text-bg-primary">Graduated</span>
+  {% else %}<span class="badge text-bg-secondary">{{ value }}</span>{% endif %}
+{% elif kind == "role" %}
+  {% if value == "STUDENT" %}<span class="badge text-bg-info">Student</span>
+  {% elif value == "TEACHER" %}<span class="badge text-bg-primary">Teacher</span>
+  {% elif value == "ADMINISTRATOR" %}<span class="badge text-bg-dark">Administrator</span>
+  {% else %}<span class="badge text-bg-secondary">{{ value }}</span>{% endif %}
+{% elif kind == "enrollment" %}
+  {% if value == "REGISTERED" %}<span class="badge text-bg-success">Registered</span>
+  {% elif value == "CANCELLED" %}<span class="badge text-bg-secondary">Cancelled</span>
+  {% else %}<span class="badge text-bg-secondary">{{ value }}</span>{% endif %}
+{% elif kind == "grade" %}
+  {% if value == "A" %}<span class="badge text-bg-success">A</span>
+  {% elif value == "B" %}<span class="badge text-bg-primary">B</span>
+  {% elif value == "C" %}<span class="badge text-bg-info">C</span>
+  {% elif value == "D" %}<span class="badge text-bg-warning">D</span>
+  {% elif value == "F" %}<span class="badge text-bg-danger">F</span>
+  {% else %}<span class="badge text-bg-secondary">{{ value }}</span>{% endif %}
+{% else %}
+  <span class="badge text-bg-secondary">{{ value }}</span>
+{% endif %}

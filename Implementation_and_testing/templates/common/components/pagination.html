@@ -1,1 +1,46 @@
-{# templates/common/components/pagination.html (Đạt): component dùng chung - TODO #}
+
+{% comment %}
+  templates/common/components/pagination.html  (Đạt)  – thanh chuyển trang dùng chung (Bootstrap 5).
+
+  Cách dùng (dùng đúng các biến mà view đã truyền ra):
+    {% include "common/components/pagination.html" with page=page page_numbers=page_numbers query_string=query_string %}
+
+  Tham số:
+    page          (bắt buộc) đối tượng có .page (trang hiện tại), .num_pages, .total
+    page_numbers  (bắt buộc) range(1, num_pages + 1)
+    query_string  (tùy chọn) các bộ lọc hiện tại đã mã hóa, ví dụ "q=An&major=CS"; được giữ nguyên khi chuyển trang
+
+  Hành vi:
+    - Chỉ có 1 trang (hoặc không có dữ liệu): không hiện thanh số trang, chỉ hiện số kết quả
+    - Nhiều trang: Previous / Next, luôn có trang đầu và trang cuối, quanh trang hiện tại hiện 2 trang mỗi bên,
+      phần bị bỏ qua thay bằng "…" (nên 100 trang vẫn gọn)
+    - Trang hiện tại có aria-current="page"; Previous/Next bị vô hiệu ở hai đầu
+{% endcomment %}
+{% with current=page.page last=page.num_pages %}
+{% with lo=current|add:"-2" hi=current|add:"2" before=current|add:"-3" after=current|add:"3" %}
+<nav aria-label="Pagination" class="d-flex flex-wrap justify-content-between align-items-center gap-2 my-3">
+  <small class="text-muted">{{ page.total }} result{{ page.total|pluralize }}{% if last > 1 %} · Page {{ current }} of {{ last }}{% endif %}</small>
+  {% if last > 1 %}
+  <ul class="pagination pagination-sm mb-0">
+    <li class="page-item{% if current <= 1 %} disabled{% endif %}">
+      {% if current > 1 %}<a class="page-link" href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ current|add:'-1' }}" rel="prev">Previous</a>
+      {% else %}<span class="page-link">Previous</span>{% endif %}
+    </li>
+    {% for n in page_numbers %}
+      {% if n == 1 or n == last or n >= lo and n <= hi %}
+        <li class="page-item{% if n == current %} active{% endif %}">
+          <a class="page-link" href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ n }}"{% if n == current %} aria-current="page"{% endif %}>{{ n }}</a>
+        </li>
+      {% elif n == before and n > 1 or n == after and n < last %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+    <li class="page-item{% if current >= last %} disabled{% endif %}">
+      {% if current < last %}<a class="page-link" href="?{% if query_string %}{{ query_string }}&amp;{% endif %}page={{ current|add:'1' }}" rel="next">Next</a>
+      {% else %}<span class="page-link">Next</span>{% endif %}
+    </li>
+  </ul>
+  {% endif %}
+</nav>
+{% endwith %}
+{% endwith %}
