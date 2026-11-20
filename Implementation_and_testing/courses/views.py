@@ -1,9 +1,9 @@
 """
-students/views.py  (Backend: Minh   Frontend: Thành)
+courses/views.py  (Backend: Minh   Frontend: Thành (Admin) + Huy/Đạt (xem section))
 
 View khung: chưa cài thì hiện trang "[CHƯA CÀI ĐẶT] tên_view". Khi làm:
- 1. BE gọi hàm trong services.py, bắt ServiceError, truyền dữ liệu vào template (context theo docs/api/students.md).
- 2. FE viết template tương ứng trong templates/students/.
+ 1. BE gọi hàm trong services.py, bắt ServiceError, truyền dữ liệu vào template (context theo docs/api/courses.md).
+ 2. FE viết template tương ứng trong templates/courses/.
 """
 from django.contrib import messages
 from django.http import HttpResponse
@@ -12,7 +12,7 @@ from common.contract import Role, ServiceError
 from common.permissions import role_required
 
 from . import services
-from .models import Student
+from .models import Course
 
 
 def _stub(name):
@@ -20,54 +20,97 @@ def _stub(name):
 
 
 @role_required(Role.ADMINISTRATOR)
-def student_list_view(request, **kwargs):
-    """Admin 5.3 danh sách hồ sơ (UC 23)
-    Template: students/student_list.html"""
-    page = services.list_students(request.user, request.GET.get("page", 1))
-    return render(request, "students/student_list.html", {"page": page})
-
-
-@role_required(Role.ADMINISTRATOR)
-def student_create_view(request, **kwargs):
-    """Admin 5.3 thêm hồ sơ (UC 23)
-    Template: students/student_form.html"""
+def course_list_view(request, **kwargs):
+    """Admin 5.4 danh sách + form thêm course (UC 26)
+    Template: courses/course_list.html"""
     if request.method == "POST":
+        p = request.POST
         try:
-            services.create_student(request.user, request.POST.dict())
-            return redirect("students:student_list")
+            services.create_course(request.user, p.get("course_code", ""), p.get("course_name", ""),
+                                   p.get("credit_hours"), p.get("class_periods"), p.get("description", ""))
+            return redirect("courses:course_list")
         except ServiceError as e:
             messages.error(request, e.message)
-    return render(request, "students/student_form.html", {"form_data": request.POST})
+    q = request.GET.get("q", "")
+    page = services.list_courses(q, request.GET.get("page", 1))
+    return render(request, "courses/course_list.html", {"page": page, "q": q, "form_data": request.POST})
 
 
 @role_required(Role.ADMINISTRATOR)
-def student_edit_view(request, **kwargs):
-    """Admin 5.3 sửa hồ sơ (UC 24)
-    Template: students/student_form.html"""
-    student = Student.objects.select_related("user").filter(pk=kwargs.get("student_id")).first()
-    if student is None:
-        messages.error(request, "Không tìm thấy sinh viên")
-        return redirect("students:student_list")
+def course_edit_view(request, **kwargs):
+    """Sửa course (UC 26)
+    Template: courses/course_form.html"""
+    course = Course.objects.filter(pk=kwargs.get("course_id")).first()
+    if course is None:
+        messages.error(request, "Không tìm thấy môn học")
+        return redirect("courses:course_list")
     if request.method == "POST":
+        p = request.POST
         try:
-            services.update_student(request.user, student.pk, request.POST.dict())
-            return redirect("students:student_list")
+            if p.get("action") == "prerequisites":
+                services.set_prerequisites(request.user, course.pk, p.getlist("prerequisite_ids"))
+            else:
+                services.update_course(request.user, course.pk, p.get("course_name", ""),
+                                       p.get("credit_hours"), p.get("class_periods"), p.get("description", ""))
+            return redirect("courses:course_list")
         except ServiceError as e:
             messages.error(request, e.message)
-    history = services.get_status_history(request.user, student.pk)
-    return render(request, "students/student_form.html",
-                  {"student": student, "history": history, "form_data": request.POST})
+    return render(request, "courses/course_form.html", {"course": course, "form_data": request.POST})
 
 
 @role_required(Role.ADMINISTRATOR)
-def student_status_view(request, **kwargs):
-    """POST đổi trạng thái học tập (UC 25)
+def course_delete_view(request, **kwargs):
+    """POST xóa course (UC 26)
     Template: (không có - POST rồi redirect)"""
     if request.method == "POST":
         try:
-            services.change_academic_status(
-                request.user, int(kwargs.get("student_id")),
-                request.POST.get("new_status", ""), request.POST.get("note", ""))
+            services.delete_course(request.user, int(kwargs.get("course_id")))
         except ServiceError as e:
             messages.error(request, e.message)
-    return redirect("students:student_list")
+    return redirect("courses:course_list")
+
+
+@role_required(Role.ADMINISTRATOR, Role.TEACHER, Role.STUDENT)
+def section_list_view(request, **kwargs):
+    """Xem section của học kỳ (UC 6)
+    Template: courses/section_list.html"""
+    semesters = services.list_semesters()
+    semester_id = kwargs.get("semester_id") or request.GET.get("semester_id")
+    if not semester_id and semesters:
+        semester_id = semesters[0].pk
+    q = request.GET.get("q", "")
+    page = services.list_offered_sections(int(semester_id), q, request.GET.get("page", 1)) if semester_id else None
+    return render(request, "courses/section_list.html",
+                  {"semesters": semesters, "semester_id": semester_id, "page": page, "q": q})
+
+
+@role_required(Role.ADMINISTRATOR)
+def section_create_view(request, **kwargs):
+    """Admin 5.6 tạo section (UC 27)
+    Template: courses/section_form.html"""
+    if request.method == "POST":
+        p = request.POST
+        schedules = [{"day_of_week": d, "start_time": s, "end_time": e}
+                     for d, s, e in zip(p.getlist("day_of_week"), p.getlist("start_time"), p.getlist("end_time"))
+                     if d or s or e]
+        try:
+            services.create_section(request.user, p.get("section_code", ""), p.get("course_id"),
+                                    p.get("semester_id"), p.get("teacher_id"), p.get("classroom", ""),
+                                    p.get("max_capacity"), schedules)
+            return redirect("courses:section_list")
+        except ServiceError as e:
+            messages.error(request, e.message)
+    return render(request, "courses/section_form.html", {"form_data": request.POST})
+
+
+@role_required(Role.ADMINISTRATOR)
+def section_students_view(request, **kwargs):
+    """Admin 5.5 DS sinh viên của section (UC 28)
+    Template: courses/section_students.html"""
+    try:
+        data = services.list_section_students(
+            request.user, int(kwargs.get("section_id")), request.GET.get("page", 1))
+    except ServiceError as e:
+        messages.error(request, e.message)
+        return redirect("courses:section_list")
+    return render(request, "courses/section_students.html", data)
