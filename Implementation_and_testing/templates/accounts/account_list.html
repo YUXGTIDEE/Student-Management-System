@@ -1,6 +1,33 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Đạt): Admin 5.1 danh sách tài khoản (UC 21)
-     Dữ liệu: xem docs/api/accounts.md -->
-<p>[CHƯA CÀI ĐẶT] accounts/account_list.html</p>
+<div class="top">
+  <div><h1>Accounts</h1><p class="sub">Create, edit, lock and unlock user accounts.</p></div>
+  <a class="btn pri" href="{% url 'accounts:account_create_view' %}">Create account</a>
+</div>
+{% if password_notice %}
+<div class="notice info"><b>{{ password_notice.username }}</b> temporary password: <span class="mono">{{ password_notice.password }}</span></div>
+{% endif %}
+<section class="card">
+  <form class="search-toolbar" method="get" style="margin-bottom:14px">
+    <div class="field grow"><label for="q">Search</label><input id="q" name="q" type="search" value="{{ filters.q }}" placeholder="Name, username or email"></div>
+    <div class="field" style="flex:0 0 180px"><label for="role">Role</label><select id="role" name="role"><option value="">All roles</option>{% for value,label in roles %}<option value="{{ value }}" {% if filters.role == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="field" style="flex:0 0 180px"><label for="status">Status</label><select id="status" name="status"><option value="">All statuses</option><option value="active" {% if filters.status == "active" %}selected{% endif %}>Active</option><option value="locked" {% if filters.status == "locked" %}selected{% endif %}>Locked</option></select></div>
+    <a class="btn" href="{% url 'accounts:account_list_view' %}">Clear</a>
+    <button class="btn pri" type="submit">Search</button>
+  </form>
+  <div class="tw">
+    <table class="t"><thead><tr><th>Username</th><th>Full name</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead><tbody>
+    {% for account in accounts %}
+      <tr>
+        <td class="mono">{{ account.username }}</td><td><b>{{ account.full_name }}</b>{% if account.id == current_user_id %} <span class="chip info">You</span>{% endif %}</td><td>{{ account.email }}</td><td>{{ account.role }}</td>
+        <td>{% if account.is_locked %}<span class="chip bad">Locked</span>{% elif not account.is_active %}<span class="chip warn">Inactive</span>{% else %}<span class="chip ok">Active</span>{% endif %}</td>
+        <td><span class="row" style="gap:8px;flex-wrap:nowrap"><a class="btn sm" href="{% url 'accounts:account_edit_view' account.id %}">Edit</a>
+        {% if account.id != current_user_id %}<form method="post" action="{% url 'accounts:account_status_view' account.id %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><input type="hidden" name="action" value="{% if account.is_locked %}unlock{% else %}lock{% endif %}"><button class="btn sm" type="submit">{% if account.is_locked %}Unlock{% else %}Lock{% endif %}</button></form>{% endif %}
+        </span></td>
+      </tr>
+    {% empty %}<tr><td colspan="6"><span class="hint">No accounts found.</span></td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+  <div class="pager"><span>Page {{ page.page }} of {{ page.num_pages }} · {{ page.total }} accounts</span><span class="row">{% if page.page > 1 %}<a class="btn sm" href="?{{ query_string }}&page={{ page.page|add:'-1' }}">Previous</a>{% endif %}{% if page.page < page.num_pages %}<a class="btn sm" href="?{{ query_string }}&page={{ page.page|add:'1' }}">Next</a>{% endif %}</span></div>
+</section>
 {% endblock %}

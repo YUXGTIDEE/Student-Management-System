@@ -1,6 +1,25 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Thành): Admin 5.6 tạo section (UC 27)
-     Dữ liệu: xem docs/api/courses.md -->
-<p>[CHƯA CÀI ĐẶT] courses/section_form.html</p>
+<div class="top"><div><div class="crumb"><a href="{% url 'courses:section_list_view' %}">Course sections</a> / Create</div><h1>Create section</h1></div></div>
+<form class="card" method="post">
+  {% csrf_token %}
+  <div class="grid2">
+    <div class="field"><label for="section_code">Section code</label><input id="section_code" name="section_code" value="{{ form_data.section_code|default:'' }}" required></div>
+    <div class="field"><label for="course_id">Course</label><select id="course_id" name="course_id" required><option value="">Select course</option>{% for course in courses %}<option value="{{ course.id }}" {% if form_data.course_id == course.id|stringformat:"s" %}selected{% endif %}>{{ course.course_code }} - {{ course.course_name }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="semester_id">Semester</label><select id="semester_id" name="semester_id" required><option value="">Select semester</option>{% for semester in semesters %}<option value="{{ semester.id }}" {% if form_data.semester_id == semester.id|stringformat:"s" %}selected{% endif %}>{{ semester.semester_name }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="teacher_id">Teacher</label><select id="teacher_id" name="teacher_id" required><option value="">Select teacher</option>{% for teacher in teachers %}<option value="{{ teacher.id }}" {% if form_data.teacher_id == teacher.id|stringformat:"s" %}selected{% endif %}>{{ teacher.teacher_code }} - {{ teacher.user.full_name }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="classroom">Classroom</label><input id="classroom" name="classroom" value="{{ form_data.classroom|default:'' }}"></div>
+    <div class="field"><label for="max_capacity">Maximum capacity</label><input id="max_capacity" name="max_capacity" type="number" min="1" value="{{ form_data.max_capacity|default:'' }}" required></div>
+  </div>
+  <h2 style="margin-top:22px">Schedule</h2>
+  <div class="schedule-fields">
+    <div class="field"><label for="day_of_week">Day (0–6)</label><input id="day_of_week" name="day_of_week" type="number" min="0" max="6" value="{{ form_data.day_of_week|default:'' }}" required><span class="hint">0 = Monday, 6 = Sunday</span></div>
+    <div class="field"><label for="start_time">Start time</label><input id="start_time" name="start_time" type="time" value="{{ form_data.start_time|default:'' }}" required></div>
+    <div class="field"><label for="end_time">End time</label><input id="end_time" name="end_time" type="time" value="{{ form_data.end_time|default:'' }}" required></div>
+  </div>
+  <div class="actions">
+    <a class="btn" href="{% url 'courses:section_list_view' %}">Cancel</a>
+    <button class="btn pri" type="submit">Create section</button>
+  </div>
+</form>
 {% endblock %}

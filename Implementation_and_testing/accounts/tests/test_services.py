@@ -19,7 +19,8 @@ def fast_password_hasher(settings):
 
 
 def make_user(username, role=Role.STUDENT, email=None, **extra):
-    user = User(username=username, role=role, full_name=f"User {username}",
+    full_name = extra.pop("full_name", f"User {username}")
+    user = User(username=username, role=role, full_name=full_name,
                 email=email or f"{username.lower()}@example.com", **extra)
     user.set_password(PASSWORD)
     user.save()

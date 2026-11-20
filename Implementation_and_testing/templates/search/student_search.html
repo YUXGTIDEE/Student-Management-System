@@ -1,6 +1,19 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Đạt): GV 4.1 / Admin tìm kiếm + lọc (UC 12, 22)
-     Dữ liệu: xem docs/api/search.md -->
-<p>[CHƯA CÀI ĐẶT] search/student_search.html</p>
+<div class="top"><div><h1>Search students</h1><p class="sub">Search and filter student records.</p></div></div>
+<section class="card" style="display:flex;flex-direction:column;gap:16px">
+  <form method="get">
+    <div class="field"><label for="q">Search</label><input id="q" name="q" type="search" value="{{ filters.q }}" placeholder="Student ID or full name"></div>
+    <div class="grid3" style="margin-top:16px">
+      <div class="field"><label for="student_class">Student class</label><input id="student_class" name="student_class" value="{{ filters.student_class }}"></div>
+      <div class="field"><label for="major">Major</label><input id="major" name="major" value="{{ filters.major }}"></div>
+      <div class="field"><label for="cohort">Academic cohort</label><input id="cohort" name="cohort" value="{{ filters.cohort }}"></div>
+      <div class="field"><label for="status">Academic status</label><select id="status" name="status"><option value="">All statuses</option>{% for value,label in statuses %}<option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="actions" style="margin-top:16px"><a class="btn" href="{% url 'search:student_search_view' %}">Clear</a><button class="btn pri" type="submit">Search</button></div>
+  </form>
+</section>
+<section class="card"><div class="top" style="align-items:center;margin-bottom:6px"><h2 style="margin:0">Results</h2><span class="hint">{{ page.total }} students found</span></div><div class="tw"><table class="t"><thead><tr><th>Student ID</th><th>Full name</th><th>Class</th><th>Major</th><th>Academic status</th><th></th></tr></thead><tbody>
+{% for student in students %}<tr><td class="mono">{{ student.student_code }}</td><td><b>{{ student.full_name }}</b></td><td>{{ student.student_class|default:"—" }}</td><td>{{ student.major|default:"—" }}</td><td>{{ student.academic_status|default:"—" }}</td><td><a class="btn sm" href="{% url 'search:student_detail_view' student.student_id %}">Open record</a></td></tr>{% empty %}<tr><td colspan="6"><span class="hint">No students found.</span></td></tr>{% endfor %}
+</tbody></table></div><div class="pager"><span>Page {{ page.page }} of {{ page.num_pages }}</span><span class="row">{% if page.page > 1 %}<a class="btn sm" href="?{{ query_string }}&page={{ page.page|add:'-1' }}">Previous</a>{% endif %}{% if page.page < page.num_pages %}<a class="btn sm" href="?{{ query_string }}&page={{ page.page|add:'1' }}">Next</a>{% endif %}</span></div></section>
 {% endblock %}

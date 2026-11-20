@@ -134,7 +134,10 @@ class Command(BaseCommand):
             self._semesters_and_sections()
             self._enrollments_and_grades()
         self.stdout.write(self.style.SUCCESS("Seed xong."))
-        self.stdout.write(f"Đăng nhập thử (mật khẩu: {self.password}):  AD001 (admin) · GV001 (giảng viên) · 100001 (sinh viên)")
+        self.stdout.write(
+            f"Login (password: {self.password}): "
+            "AD001 (admin) | GV001 (teacher) | 100001 (student)"
+        )
 
     # ------------------------------------------------------------ tài khoản
     def _user(self, username, role, full_name):

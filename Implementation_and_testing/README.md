@@ -30,15 +30,51 @@ Mỗi người **chỉ sửa file của mình**. Hàm nào còn là khung sẽ b
 4. Chạy thử, tự viết unit test trong `<app>/tests/` cho logic của mình, rồi mở pull request.
 
 ## Chạy dự án
+
+### Windows (PowerShell)
+
+```powershell
+cd "C:\Users\Dat\Downloads\Student-Management-System-main\Implementation_and_testing"
+
+Copy-Item .env.example .env
+docker compose up -d
+
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+py -m pip install -r requirements.txt
+
+py manage.py migrate
+py manage.py seed
+py manage.py runserver 127.0.0.1:8000
 ```
+
+Sau đó mở:
+
+- http://127.0.0.1:8000/accounts/login/
+- Tài khoản mẫu: `AD001 / Pass1234` (admin), `GV001 / Pass1234` (giảng viên), `100001 / Pass1234` (sinh viên).
+
+Nếu PowerShell không chạy script activate vì policy, có thể dùng:
+
+```powershell
+.\.venv\Scripts\activate.bat
+```
+
+Hoặc chạy trực tiếp lệnh trong môi trường bằng `py` mà không cần activate.
+
+### macOS/Linux
+
+```bash
 cp .env.example .env
-docker compose up -d                    # MySQL 8
-python -m venv .venv && .venv\Scripts\activate    # Linux/Mac: source .venv/bin/activate
+docker compose up -d
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
+python manage.py seed
 python manage.py runserver
 ```
-Windows không cài được `mysqlclient`: đổi dòng đó trong `requirements.txt` thành `pymysql` (settings đã tự nhận).
+
+Dừng server bằng `Ctrl+C`. Dừng MySQL bằng `docker compose stop`.
 
 ## Quy ước chung
 - **Chỉ Hoa Binh sửa model và migration.** Cần thêm cột thì nhắn Hoa Binh.

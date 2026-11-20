@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.shortcuts import redirect
 from django.urls import include, path
+from accounts.views import home_view
 
 urlpatterns = [
-    path("", lambda r: redirect("accounts:login_view")),   # TODO (Binh/Huy): trang chủ theo role
+    path("", home_view, name="home"),
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
     path("students/", include("students.urls")),

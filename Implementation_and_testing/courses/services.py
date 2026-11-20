@@ -190,6 +190,9 @@ def create_section(admin_user, section_code: str, course_id: int, semester_id: i
 
     section_code = section_code.strip()
     classroom = classroom.strip()
+    course_id = _to_positive_int(course_id, "Course")
+    semester_id = _to_positive_int(semester_id, "Semester")
+    teacher_id = _to_positive_int(teacher_id, "Teacher")
     max_capacity = _to_positive_int(max_capacity, "Sĩ số tối đa")
 
     # Làm sạch lịch học
@@ -297,6 +300,20 @@ def list_section_students(admin_user, section_id: int, page: int = 1) -> dict:
         "max_capacity": section.max_capacity,
         "students": Page(rows, page_obj.number, paginator.num_pages, paginator.count),
     }
+
+
+def delete_section(admin_user, section_id: int) -> None:
+    """Delete an unused section. Sections with enrollments or gradebooks are protected."""
+    _check_admin(admin_user)
+    section = CourseSection.objects.filter(pk=section_id).first()
+    if section is None:
+        raise ServiceError(ErrorCode.NOT_FOUND, "Section not found")
+
+    from registration.models import Enrollment
+    if Enrollment.objects.filter(section=section).exists():
+        raise ServiceError(ErrorCode.VALIDATION, "Cannot delete a section that has enrollments")
+
+    section.delete()
 
 
 def list_semesters() -> list:

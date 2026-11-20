@@ -1,6 +1,37 @@
 {% extends "common/base.html" %}
+{% block title %}{{ mode|title }} account · Student Management{% endblock %}
 {% block content %}
-<!-- TODO (Đạt): Admin 5.2 tạo tài khoản (UC 19)
-     Dữ liệu: xem docs/api/accounts.md -->
-<p>[CHƯA CÀI ĐẶT] accounts/account_form.html</p>
+<div class="top">
+  <div>
+    <div class="crumb"><a href="{% url 'accounts:account_list_view' %}">Accounts</a> / {{ mode|title }}</div>
+    <h1>{{ mode|title }} account</h1>
+    <p class="sub">{% if mode == "create" %}Create a login account for a student, teacher or administrator.{% else %}Update account information.{% endif %}</p>
+  </div>
+</div>
+<form class="card" method="post" style="display:flex;flex-direction:column;gap:18px;max-width:760px">
+  {% csrf_token %}
+  <div class="grid2">
+    <div class="field"><label for="full_name">Full name</label><input id="full_name" name="full_name" value="{{ form_data.full_name|default:'' }}" required>{% if field_errors.full_name %}<span class="err">{{ field_errors.full_name }}</span>{% endif %}</div>
+    <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" value="{{ form_data.email|default:'' }}" required>{% if field_errors.email %}<span class="err">{{ field_errors.email }}</span>{% endif %}</div>
+  </div>
+  <div class="grid2">
+    <div class="field"><label for="role">Role</label><select id="role" name="role">{% for value,label in roles %}<option value="{{ value }}" {% if form_data.role == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="username">Username</label><input id="username" name="username" value="{% if account %}{{ account.username }}{% elif form_data.username %}{{ form_data.username }}{% endif %}" {% if mode == "edit" %}readonly{% else %}required{% endif %}></div>
+  </div>
+  {% if mode == "create" %}<div class="notice info">A random initial password is generated and shown once after creation.</div>{% endif %}
+  <div class="actions">
+    <a class="btn" href="{% url 'accounts:account_list_view' %}">Cancel</a>
+    <button class="btn pri" type="submit">{% if mode == "edit" %}Save changes{% else %}Create account{% endif %}</button>
+  </div>
+</form>
+  {% if mode == "edit" %}
+  <form class="card" method="post" action="{% url 'accounts:account_reset_password_view' account.id %}" style="max-width:760px;margin-top:12px">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <div class="row" style="justify-content:space-between">
+      <span><b>Password</b><br><span class="hint">Reset to a new random password.</span></span>
+      <button class="btn" type="submit">Reset password</button>
+    </div>
+  </form>
+  {% endif %}
 {% endblock %}

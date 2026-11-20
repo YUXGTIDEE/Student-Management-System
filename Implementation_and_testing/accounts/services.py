@@ -440,6 +440,12 @@ def set_account_status(admin_user, user_id: int, locked: bool) -> None:
     User.objects.filter(pk=target.pk).update(**updates)
 
 
+def get_account(admin_user, user_id: int):
+    """Return an account for the admin edit/reset screens."""
+    _ensure_admin(admin_user)
+    return _get_user(user_id)
+
+
 def list_accounts(q: str = "", role: str = "", locked=None, page: int = 1):
     """Trả về common.contract.Page, tìm theo tên/mã/email, lọc role/status.
 

@@ -8,11 +8,13 @@ View khung: chưa cài thì hiện trang "[CHƯA CÀI ĐẶT] tên_view". Khi l�
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 from common.contract import Role, ServiceError
 from common.permissions import role_required
 
 from . import services
-from .models import Course
+from accounts.models import Teacher
+from .models import Course, Semester
 
 
 def _stub(name):
@@ -28,7 +30,7 @@ def course_list_view(request, **kwargs):
         try:
             services.create_course(request.user, p.get("course_code", ""), p.get("course_name", ""),
                                    p.get("credit_hours"), p.get("class_periods"), p.get("description", ""))
-            return redirect("courses:course_list")
+            return redirect("courses:course_list_view")
         except ServiceError as e:
             messages.error(request, e.message)
     q = request.GET.get("q", "")
@@ -43,7 +45,7 @@ def course_edit_view(request, **kwargs):
     course = Course.objects.filter(pk=kwargs.get("course_id")).first()
     if course is None:
         messages.error(request, "Không tìm thấy môn học")
-        return redirect("courses:course_list")
+        return redirect("courses:course_list_view")
     if request.method == "POST":
         p = request.POST
         try:
@@ -52,7 +54,7 @@ def course_edit_view(request, **kwargs):
             else:
                 services.update_course(request.user, course.pk, p.get("course_name", ""),
                                        p.get("credit_hours"), p.get("class_periods"), p.get("description", ""))
-            return redirect("courses:course_list")
+            return redirect("courses:course_list_view")
         except ServiceError as e:
             messages.error(request, e.message)
     return render(request, "courses/course_form.html", {"course": course, "form_data": request.POST})
@@ -67,7 +69,7 @@ def course_delete_view(request, **kwargs):
             services.delete_course(request.user, int(kwargs.get("course_id")))
         except ServiceError as e:
             messages.error(request, e.message)
-    return redirect("courses:course_list")
+    return redirect("courses:course_list_view")
 
 
 @role_required(Role.ADMINISTRATOR, Role.TEACHER, Role.STUDENT)
@@ -97,10 +99,15 @@ def section_create_view(request, **kwargs):
             services.create_section(request.user, p.get("section_code", ""), p.get("course_id"),
                                     p.get("semester_id"), p.get("teacher_id"), p.get("classroom", ""),
                                     p.get("max_capacity"), schedules)
-            return redirect("courses:section_list")
+            return redirect("courses:section_list_view")
         except ServiceError as e:
             messages.error(request, e.message)
-    return render(request, "courses/section_form.html", {"form_data": request.POST})
+    return render(request, "courses/section_form.html", {
+        "form_data": request.POST,
+        "courses": Course.objects.all().order_by("course_code"),
+        "semesters": Semester.objects.all().order_by("-start_date"),
+        "teachers": Teacher.objects.select_related("user").all().order_by("teacher_code"),
+    })
 
 
 @role_required(Role.ADMINISTRATOR)
@@ -112,5 +119,16 @@ def section_students_view(request, **kwargs):
             request.user, int(kwargs.get("section_id")), request.GET.get("page", 1))
     except ServiceError as e:
         messages.error(request, e.message)
-        return redirect("courses:section_list")
+        return redirect("courses:section_list_view")
     return render(request, "courses/section_students.html", data)
+
+
+@role_required(Role.ADMINISTRATOR)
+@require_POST
+def section_delete_view(request, section_id, **kwargs):
+    try:
+        services.delete_section(request.user, section_id)
+        messages.success(request, "Section deleted.")
+    except ServiceError as error:
+        messages.error(request, error.message)
+    return redirect("courses:section_list_view")

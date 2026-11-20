@@ -1,6 +1,8 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Đạt): Xem hồ sơ cá nhân (UC 4) - SV 3.1
-     Dữ liệu: xem docs/api/accounts.md -->
-<p>[CHƯA CÀI ĐẶT] accounts/profile.html</p>
+<div class="top"><div><h1>Personal information</h1><p class="sub">View your personal and academic information.</p></div>{% if profile.role == "STUDENT" or profile.role == "TEACHER" %}<a class="btn pri" href="{% url 'accounts:contact_edit_view' %}">Update contact details</a>{% endif %}</div>
+{% if profile %}
+<section class="card"><h2>Profile</h2><dl class="kv"><div><dt>{% if profile.role == "STUDENT" %}Student ID{% else %}Teacher ID{% endif %}</dt><dd class="mono">{% if profile.role == "STUDENT" %}{{ profile.student_code }}{% elif profile.role == "TEACHER" %}{{ profile.teacher_code }}{% else %}{{ profile.username }}{% endif %}</dd></div><div><dt>Full name</dt><dd>{{ profile.full_name }}</dd></div>{% if profile.date_of_birth %}<div><dt>Date of birth</dt><dd>{{ profile.date_of_birth }}</dd></div><div><dt>Gender</dt><dd>{{ profile.gender_display }}</dd></div>{% endif %}{% if profile.department %}<div><dt>Department</dt><dd>{{ profile.department }}</dd></div>{% endif %}</dl></section>
+<section class="card"><h2>Contact details</h2><dl class="kv"><div><dt>Email</dt><dd>{{ profile.email }}</dd></div><div><dt>Phone number</dt><dd>{{ profile.phone_number|default:"—" }}</dd></div>{% if profile.address %}<div><dt>Address</dt><dd>{{ profile.address }}</dd></div>{% endif %}</dl></section>
+{% endif %}
 {% endblock %}

@@ -1,6 +1,25 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Thành): Sửa course (UC 26)
-     Dữ liệu: xem docs/api/courses.md -->
-<p>[CHƯA CÀI ĐẶT] courses/course_form.html</p>
+<div class="top"><div><div class="crumb"><a href="{% url 'courses:course_list_view' %}">Courses</a> / Edit</div><h1>Edit course</h1></div></div>
+<form class="card" method="post" style="max-width:760px">
+  {% csrf_token %}
+  <div class="grid2">
+    <div class="field"><label for="course_code">Course code</label><input id="course_code" value="{{ course.course_code }}" readonly></div>
+    <div class="field"><label for="course_name">Course name</label><input id="course_name" name="course_name" value="{{ form_data.course_name|default:course.course_name }}" required></div>
+    <div class="field"><label for="credit_hours">Credits</label><input id="credit_hours" name="credit_hours" type="number" min="1" value="{{ form_data.credit_hours|default:course.credit_hours }}"></div>
+    <div class="field"><label for="class_periods">Class periods</label><input id="class_periods" name="class_periods" type="number" min="1" value="{{ form_data.class_periods|default:course.class_periods }}"></div>
+    <div class="field" style="grid-column:1/-1"><label for="description">Description</label><textarea id="description" name="description">{{ form_data.description|default:course.description }}</textarea></div>
+  </div>
+  <div class="actions">
+    <a class="btn" href="{% url 'courses:course_list_view' %}">Cancel</a>
+    <button class="btn pri" type="submit">Save changes</button>
+  </div>
+</form>
+<form class="card" method="post" action="{% url 'courses:course_delete_view' course.id %}" style="max-width:760px;margin-top:12px" onsubmit="return confirm('Delete this course?')">
+  {% csrf_token %}
+  <div class="row" style="justify-content:space-between">
+    <span><b>Delete course</b><br><span class="hint">This is only allowed when the course is not used by a section.</span></span>
+    <button class="btn danger" type="submit">Delete course</button>
+  </div>
+</form>
 {% endblock %}

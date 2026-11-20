@@ -1,16 +1,56 @@
-{# templates/common/base.html  (Phụ trách: Đạt) - layout chung, sidebar theo role, khối người dùng + Log out.
-   Mọi template khác phải {% extends "common/base.html" %}. Huy, Thành chỉ viết trong {% block content %}. #}
+{% load static %}
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Student Management System{% endblock %}</title>
-  <!-- TODO (Đạt): Bootstrap CDN, CSS chung -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'sms/app.css' %}?v=5">
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
-  <!-- TODO (Đạt): sidebar theo request.user.role (Student / Teacher / Administrator), nút Log out -->
-  {% if messages %}{% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}{% endif %}
-  {% block content %}{% endblock %}
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">
+        <span class="logo"></span>
+        <div><b>Student Management</b><small>{{ request.user.get_role_display|default:"University portal" }}</small></div>
+      </div>
+      <nav class="nav">
+        {% if request.user.role == "ADMINISTRATOR" %}
+          <a href="{% url 'accounts:account_list_view' %}">Accounts</a>
+          <a href="{% url 'students:student_list_view' %}">Student records</a>
+          <a href="{% url 'courses:course_list_view' %}">Courses</a>
+          <a href="{% url 'courses:section_list_view' %}">Course sections</a>
+          <a href="{% url 'grades:locked_gradebooks_view' %}">Gradebooks</a>
+        {% elif request.user.role == "TEACHER" %}
+          <a href="{% url 'search:assigned_sections_view' %}">Assigned sections</a>
+          <a href="{% url 'search:student_search_view' %}">Search students</a>
+          <a href="{% url 'search:assigned_sections_view' %}">Gradebook</a>
+        {% else %}
+          <a href="{% url 'accounts:profile_view' %}">My profile</a>
+          <a href="{% url 'registration:open_sections_view' %}">Register courses</a>
+          <a href="{% url 'grades:student_results_view' %}">Academic results</a>
+        {% endif %}
+      </nav>
+      {% if request.user.is_authenticated %}
+        <div class="who">
+          <div><b>{{ request.user.full_name|default:request.user.username }}</b><small>{{ request.user.username }}</small></div>
+          <form method="post" action="{% url 'accounts:logout_view' %}">
+            {% csrf_token %}
+            <button class="btn sm" type="submit" name="logout" value="1" onclick="this.form.submit()">Log out</button>
+          </form>
+        </div>
+      {% endif %}
+    </aside>
+    <main class="main">
+      {% if messages %}{% for m in messages %}<div class="notice {% if m.tags == 'error' %}bad{% else %}ok{% endif %}">{{ m }}</div>{% endfor %}{% endif %}
+      {% if error %}<div class="notice bad">{{ error }}</div>{% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  <script src="{% static 'sms/app.js' %}?v=5"></script>
+  {% block extra_scripts %}{% endblock %}
 </body>
 </html>

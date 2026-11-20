@@ -34,7 +34,7 @@ def student_create_view(request, **kwargs):
     if request.method == "POST":
         try:
             services.create_student(request.user, request.POST.dict())
-            return redirect("students:student_list")
+            return redirect("students:student_list_view")
         except ServiceError as e:
             messages.error(request, e.message)
     return render(request, "students/student_form.html", {"form_data": request.POST})
@@ -47,11 +47,11 @@ def student_edit_view(request, **kwargs):
     student = Student.objects.select_related("user").filter(pk=kwargs.get("student_id")).first()
     if student is None:
         messages.error(request, "Không tìm thấy sinh viên")
-        return redirect("students:student_list")
+        return redirect("students:student_list_view")
     if request.method == "POST":
         try:
             services.update_student(request.user, student.pk, request.POST.dict())
-            return redirect("students:student_list")
+            return redirect("students:student_list_view")
         except ServiceError as e:
             messages.error(request, e.message)
     history = services.get_status_history(request.user, student.pk)
@@ -70,4 +70,4 @@ def student_status_view(request, **kwargs):
                 request.POST.get("new_status", ""), request.POST.get("note", ""))
         except ServiceError as e:
             messages.error(request, e.message)
-    return redirect("students:student_list")
+    return redirect("students:student_list_view")

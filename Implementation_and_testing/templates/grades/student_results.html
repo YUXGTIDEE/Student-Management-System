@@ -1,6 +1,6 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Đạt): SV 3.7 kết quả học tập (UC 10)
-     Dữ liệu: xem docs/api/grades.md -->
-<p>[CHƯA CÀI ĐẶT] grades/student_results.html</p>
+<div class="top"><div><h1>Academic results</h1><p class="sub">Only grades locked by the teacher are shown.</p></div><form method="get" class="field" style="min-width:240px"><label for="semester_id">Semester ID</label><input id="semester_id" name="semester_id" value="{{ semester_id|default:'' }}" type="number"></form></div>
+<div class="row"><div class="stat"><b>{{ gpa|default:"—" }}</b><span>Semester GPA</span></div><div class="stat"><b>{{ academic_status|default:"—" }}</b><span>Academic status</span></div></div>
+<section class="card"><h2>Results by course section</h2><div class="tw"><table class="t"><thead><tr><th>Section</th><th>Course</th><th>Credits</th><th>Attendance</th><th>Midterm</th><th>Final</th><th>Final grade</th><th>Letter</th><th>Result</th></tr></thead><tbody>{% for row in rows %}<tr><td class="mono">{{ row.section_code|default:"—" }}</td><td><b>{{ row.course_name|default:"—" }}</b></td><td>{{ row.credits|default:"—" }}</td><td>{{ row.attendance|default:"—" }}</td><td>{{ row.midterm|default:"—" }}</td><td>{{ row.final|default:"—" }}</td><td><b>{{ row.final_score|default:"—" }}</b></td><td>{{ row.letter|default:"—" }}</td><td>{% if row.passed %}<span class="chip ok">Pass</span>{% else %}<span class="chip bad">Fail</span>{% endif %}</td></tr>{% empty %}<tr><td colspan="9"><span class="hint">No academic results available.</span></td></tr>{% endfor %}</tbody></table></div></section>
 {% endblock %}

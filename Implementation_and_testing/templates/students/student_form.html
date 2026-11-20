@@ -1,6 +1,15 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Thành): Admin 5.3 thêm hồ sơ (UC 23)
-     Dữ liệu: xem docs/api/students.md -->
-<p>[CHƯA CÀI ĐẶT] students/student_form.html</p>
+<div class="top"><div><div class="crumb"><a href="{% url 'students:student_list_view' %}">Student records</a> / {% if student %}Edit{% else %}Create{% endif %}</div><h1>{% if student %}Edit student{% else %}Create student{% endif %}</h1></div></div>
+<form class="card" method="post" style="max-width:760px"><div class="grid2">{% csrf_token %}
+<div class="field"><label for="student_code">Student code</label><input id="student_code" name="student_code" value="{% if form_data.student_code %}{{ form_data.student_code }}{% elif student %}{{ student.student_code }}{% endif %}" {% if student %}readonly{% endif %}></div>
+<div class="field"><label for="full_name">Full name</label><input id="full_name" name="full_name" value="{% if form_data.full_name %}{{ form_data.full_name }}{% elif student %}{{ student.user.full_name }}{% endif %}"></div>
+<div class="field"><label for="email">Email</label><input id="email" name="email" type="email" value="{% if form_data.email %}{{ form_data.email }}{% elif student %}{{ student.user.email }}{% endif %}"></div>
+<div class="field"><label for="phone_number">Phone number</label><input id="phone_number" name="phone_number" value="{% if form_data.phone_number %}{{ form_data.phone_number }}{% elif student %}{{ student.user.phone_number }}{% endif %}"></div>
+<div class="field"><label for="student_class">Student class</label><input id="student_class" name="student_class" value="{% if form_data.student_class %}{{ form_data.student_class }}{% elif student %}{{ student.student_class }}{% endif %}"></div>
+<div class="field"><label for="major">Major</label><input id="major" name="major" value="{% if form_data.major %}{{ form_data.major }}{% elif student %}{{ student.major }}{% endif %}"></div>
+<div class="field"><label for="cohort">Academic cohort</label><input id="cohort" name="academic_cohort" value="{% if form_data.academic_cohort %}{{ form_data.academic_cohort }}{% elif student %}{{ student.academic_cohort }}{% endif %}"></div>
+<div class="field"><label for="academic_status">Academic status</label><input id="academic_status" name="academic_status" value="{% if form_data.academic_status %}{{ form_data.academic_status }}{% elif student %}{{ student.academic_status }}{% endif %}"></div>
+</div><div class="actions"><a class="btn" href="{% url 'students:student_list_view' %}">Cancel</a><button class="btn pri" type="submit">Save student</button></div></form>
+{% if student and history %}<section class="card"><h2>Academic status history</h2><div class="tw"><table class="t"><thead><tr><th>Status</th><th>Note</th><th>Changed at</th></tr></thead><tbody>{% for item in history %}<tr><td>{{ item.new_status }}</td><td>{{ item.note|default:"—" }}</td><td>{{ item.changed_at }}</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
 {% endblock %}

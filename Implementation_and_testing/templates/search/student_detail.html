@@ -1,6 +1,7 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Đạt): GV 4.2 hồ sơ chi tiết chỉ đọc (UC 13)
-     Dữ liệu: xem docs/api/search.md -->
-<p>[CHƯA CÀI ĐẶT] search/student_detail.html</p>
+<div class="top"><div><div class="crumb"><a href="{% url 'search:student_search_view' %}">Search students</a> / Student record</div><h1>Student record</h1></div></div>
+{% if student %}
+<section class="card"><h2>{{ student.full_name }}</h2><dl class="kv"><div><dt>Student ID</dt><dd class="mono">{{ student.student_code }}</dd></div><div><dt>Email</dt><dd>{{ student.email }}</dd></div><div><dt>Student class</dt><dd>{{ student.student_class|default:"—" }}</dd></div><div><dt>Major</dt><dd>{{ student.major|default:"—" }}</dd></div><div><dt>Cohort</dt><dd>{{ student.cohort|default:"—" }}</dd></div><div><dt>Academic status</dt><dd>{{ student.academic_status|default:"—" }}</dd></div></dl></section>
+{% endif %}
 {% endblock %}

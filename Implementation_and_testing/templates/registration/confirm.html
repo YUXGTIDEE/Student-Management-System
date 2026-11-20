@@ -1,6 +1,5 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Huy): SV 3.4 dialog xác nhận, gọi validate_registration (UC 7)
-     Dữ liệu: xem docs/api/registration.md -->
-<p>[CHƯA CÀI ĐẶT] registration/confirm.html</p>
+<div class="top"><div><h1>Confirm registration</h1><p class="sub">Review the section before registering.</p></div></div>
+<section class="card"><h2>{{ section.section_code }} · {{ section.course.course_name }}</h2><dl class="kv"><div><dt>Credits</dt><dd>{{ section.course.credit_hours }}</dd></div><div><dt>Teacher</dt><dd>{{ section.teacher.user.full_name|default:"—" }}</dd></div><div><dt>Classroom</dt><dd>{{ section.classroom|default:"—" }}</dd></div><div><dt>Capacity</dt><dd>{{ section.current_enrollment }} / {{ section.max_capacity }}</dd></div></dl>{% if can_register %}<form method="post" action="{% url 'registration:register_view' section.id %}" style="margin-top:18px">{% csrf_token %}<div class="actions"><a class="btn" href="{% url 'registration:open_sections_view' %}?semester_id={{ section.semester_id }}">Cancel</a><button class="btn pri" type="submit">Confirm registration</button></div></form>{% endif %}</section>
 {% endblock %}

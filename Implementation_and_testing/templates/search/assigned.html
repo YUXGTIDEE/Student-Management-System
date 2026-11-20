@@ -1,6 +1,7 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Đạt): GV 4.3 danh sách được phân công (UC 11)
-     Dữ liệu: xem docs/api/search.md -->
-<p>[CHƯA CÀI ĐẶT] search/assigned.html</p>
+<div class="top"><div><h1>Assigned sections</h1><p class="sub">Sections assigned to you and their student lists.</p></div></div>
+<section class="card"><form class="row" method="get"><div class="field" style="flex:0 0 260px"><label for="semester">Semester</label><select id="semester" name="semester"><option value="">All semesters</option>{% for semester in semesters %}<option value="{{ semester.id }}" {% if selected_semester == semester.id|stringformat:"s" %}selected{% endif %}>{{ semester.name }}</option>{% endfor %}</select></div><button class="btn pri" type="submit">Apply</button></form></section>
+<section class="card"><h2>Assigned sections</h2><div class="tw"><table class="t"><thead><tr><th>Section</th><th>Course</th><th>Semester</th><th></th></tr></thead><tbody>{% for section in sections %}<tr><td class="mono">{{ section.section_code }}</td><td>{{ section.course_name }}</td><td>{{ section.semester_name }}</td><td><a class="btn sm" href="?semester={{ selected_semester }}&section={{ section.section_id }}">View students</a></td></tr>{% empty %}<tr><td colspan="4"><span class="hint">No assigned sections.</span></td></tr>{% endfor %}</tbody></table></div></section>
+{% if selected_section %}<section class="card"><h2>Students · {{ selected_section.section_code }}</h2><div class="tw"><table class="t"><thead><tr><th>Student ID</th><th>Full name</th><th>Email</th></tr></thead><tbody>{% for student in students %}<tr><td class="mono">{{ student.student_code }}</td><td>{{ student.full_name }}</td><td>{{ student.email }}</td></tr>{% empty %}<tr><td colspan="3"><span class="hint">No students enrolled.</span></td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
 {% endblock %}

@@ -1,6 +1,5 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Đạt): Cập nhật liên hệ (UC 5) - SV 3.2
-     Dữ liệu: xem docs/api/accounts.md -->
-<p>[CHƯA CÀI ĐẶT] accounts/contact_edit.html</p>
+<div class="top"><div><div class="crumb"><a href="{% url 'accounts:profile_view' %}">Personal information</a> / Edit</div><h1>Contact details</h1></div></div>
+<form class="card" method="post" style="max-width:760px"><div class="grid2">{% csrf_token %}{% if profile %}<div class="field"><label>Account ID</label><input value="{% if profile.role == 'STUDENT' %}{{ profile.student_code }}{% elif profile.role == 'TEACHER' %}{{ profile.teacher_code }}{% else %}{{ profile.username }}{% endif %}" readonly></div><div class="field"><label>Full name</label><input value="{{ profile.full_name }}" readonly></div>{% endif %}<div class="field"><label for="email">Email</label><input id="email" name="email" type="email" value="{{ form_data.email|default:'' }}">{% if field_errors.email %}<span class="err">{{ field_errors.email }}</span>{% endif %}</div><div class="field"><label for="phone_number">Phone number</label><input id="phone_number" name="phone_number" value="{{ form_data.phone_number|default:'' }}">{% if field_errors.phone_number %}<span class="err">{{ field_errors.phone_number }}</span>{% endif %}</div>{% if can_edit_address %}<div class="field" style="grid-column:1/-1"><label for="address">Address</label><textarea id="address" name="address">{{ form_data.address|default:'' }}</textarea></div>{% endif %}</div><div class="actions"><a class="btn" href="{% url 'accounts:profile_view' %}">Cancel</a><button class="btn pri" type="submit">Save changes</button></div></form>
 {% endblock %}

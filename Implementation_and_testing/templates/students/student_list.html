@@ -1,6 +1,5 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Thành): Admin 5.3 danh sách hồ sơ (UC 23)
-     Dữ liệu: xem docs/api/students.md -->
-<p>[CHƯA CÀI ĐẶT] students/student_list.html</p>
+<div class="top"><div><h1>Student records</h1><p class="sub">Manage student profiles and academic status.</p></div><a class="btn pri" href="{% url 'students:student_create_view' %}">Create student</a></div>
+<section class="card"><div class="tw"><table class="t"><thead><tr><th>Student ID</th><th>Full name</th><th>Class</th><th>Major</th><th>Academic status</th><th></th></tr></thead><tbody>{% for student in page.items %}<tr><td class="mono">{{ student.student_code }}</td><td><b>{{ student.user.full_name }}</b></td><td>{{ student.student_class|default:"—" }}</td><td>{{ student.major|default:"—" }}</td><td>{{ student.academic_status }}</td><td><a class="btn sm" href="{% url 'students:student_edit_view' student.id %}">Edit</a></td></tr>{% empty %}<tr><td colspan="6"><span class="hint">No student records.</span></td></tr>{% endfor %}</tbody></table></div><div class="pager"><span>Page {{ page.page }} of {{ page.num_pages }} · {{ page.total }} records</span></div></section>
 {% endblock %}

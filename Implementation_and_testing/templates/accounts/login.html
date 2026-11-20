@@ -1,6 +1,47 @@
-{% extends "common/base.html" %}
-{% block content %}
-<!-- TODO (Đạt): Màn hình đăng nhập (UC 1)
-     Dữ liệu: xem docs/api/accounts.md -->
-<p>[CHƯA CÀI ĐẶT] accounts/login.html</p>
-{% endblock %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in · Student Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'sms/app.css' %}?v=5">
+</head>
+<body>
+  <div class="auth">
+    <section class="hero">
+      <div class="brand"><span class="logo"></span><div><b style="color:#fff">Student Management</b><small style="color:#DCE8F4">University portal</small></div></div>
+      <div>
+        <h1>Everything about your studies, in one place.</h1>
+        <p>Register for course sections, follow your results, enter grades and manage records. You only see the functions your role allows.</p>
+      </div>
+      <div class="hint" style="color:#DCE8F4">Students · Teachers · Administrators</div>
+    </section>
+    <section class="form">
+      <form class="box" method="post" action="{% url 'accounts:login_view' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <div><h1 style="font-size:28px">Log in</h1><p class="sub">Use your university account.</p></div>
+        <div class="field">
+          <label for="uid">Student ID, teacher ID or email</label>
+          <input id="uid" name="identifier" type="text" value="{{ identifier }}" placeholder="e.g. SV2024001" required autofocus>
+          {% if field_errors.identifier %}<span class="err">{{ field_errors.identifier }}</span>{% endif %}
+        </div>
+        <div class="field">
+          <label for="pw">Password</label>
+          <input id="pw" name="password" type="password" placeholder="Enter your password" required>
+          {% if field_errors.password %}<span class="err">{{ field_errors.password }}</span>{% endif %}
+        </div>
+        {% if error %}<div class="notice bad">{{ error }}</div>{% endif %}
+        <button class="btn pri" type="submit">Log in</button>
+        <div class="row" style="justify-content:space-between">
+          <a href="{% url 'accounts:reset_password_view' %}">Forgot password?</a>
+          <span class="hint">Locked account? Contact the Administrator.</span>
+        </div>
+      </form>
+    </section>
+  </div>
+</body>
+</html>

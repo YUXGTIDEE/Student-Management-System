@@ -1,6 +1,12 @@
 {% extends "common/base.html" %}
 {% block content %}
-<!-- TODO (Thành): Xem section của học kỳ (UC 6)
-     Dữ liệu: xem docs/api/courses.md -->
-<p>[CHƯA CÀI ĐẶT] courses/section_list.html</p>
+<div class="top"><div><h1>Course sections</h1><p class="sub">View sections offered in a semester.</p></div>{% if request.user.role == "ADMINISTRATOR" %}<a class="btn pri" href="{% url 'courses:section_create_view' %}">Create section</a>{% endif %}</div>
+<section class="card">
+  <form class="filter-row" method="get">
+    <div class="field filter-semester"><label for="semester_id">Semester</label><select id="semester_id" name="semester_id">{% for semester in semesters %}<option value="{{ semester.id }}" {% if semester_id == semester.id|stringformat:"s" or semester_id == semester.id %}selected{% endif %}>{{ semester.semester_name }}</option>{% endfor %}</select></div>
+    <div class="field filter-search"><label for="q">Search</label><input id="q" name="q" value="{{ q }}" placeholder="Section or course"></div>
+    <button class="btn pri filter-action" type="submit">Apply</button>
+  </form>
+</section>
+<section class="card"><div class="tw"><table class="t"><thead><tr><th>Section</th><th>Course</th><th>Teacher</th><th>Capacity</th><th></th></tr></thead><tbody>{% for section in page.items %}<tr><td class="mono">{{ section.section_code }}</td><td><b>{{ section.course.course_name }}</b><br><span class="hint mono">{{ section.course.course_code }}</span></td><td>{{ section.teacher.user.full_name|default:"—" }}</td><td>{{ section.current_enrollment|default:0 }} / {{ section.max_capacity }}</td><td>{% if request.user.role == "ADMINISTRATOR" %}<a class="btn sm" href="{% url 'courses:section_students_view' section.id %}">Students</a>{% endif %}</td></tr>{% empty %}<tr><td colspan="5"><span class="hint">No sections found.</span></td></tr>{% endfor %}</tbody></table></div></section>
 {% endblock %}
