@@ -6,50 +6,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Student Management System{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'sms/app.css' %}?v=5">
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+{% with current=request.resolver_match.view_name %}
+  {% if request.user.is_authenticated %}
   <div class="shell">
     <aside class="side">
       <div class="brand">
         <span class="logo"></span>
         <div><b>Student Management</b><small>{{ request.user.get_role_display|default:"University portal" }}</small></div>
       </div>
-      <nav class="nav">
+      <nav class="nav" aria-label="Main">
         {% if request.user.role == "ADMINISTRATOR" %}
-          <a href="{% url 'accounts:account_list_view' %}">Accounts</a>
-          <a href="{% url 'students:student_list_view' %}">Student records</a>
-          <a href="{% url 'courses:course_list_view' %}">Courses</a>
-          <a href="{% url 'courses:section_list_view' %}">Course sections</a>
-          <a href="{% url 'grades:locked_gradebooks_view' %}">Gradebooks</a>
+          <a href="{% url 'accounts:account_list_view' %}"{% if current == 'accounts:account_list_view' %} class="active" aria-current="page"{% endif %}>Accounts</a>
+          <a href="{% url 'students:student_list_view' %}"{% if current == 'students:student_list_view' %} class="active" aria-current="page"{% endif %}>Student records</a>
+          <a href="{% url 'courses:course_list_view' %}"{% if current == 'courses:course_list_view' %} class="active" aria-current="page"{% endif %}>Courses</a>
+          <a href="{% url 'courses:section_list_view' %}"{% if current == 'courses:section_list_view' %} class="active" aria-current="page"{% endif %}>Course sections</a>
+          <a href="{% url 'search:student_search_view' %}"{% if current == 'search:student_search_view' %} class="active" aria-current="page"{% endif %}>Search students</a>
+          <a href="{% url 'grades:locked_gradebooks_view' %}"{% if current == 'grades:locked_gradebooks_view' %} class="active" aria-current="page"{% endif %}>Gradebooks</a>
         {% elif request.user.role == "TEACHER" %}
-          <a href="{% url 'search:assigned_sections_view' %}">Assigned sections</a>
-          <a href="{% url 'search:student_search_view' %}">Search students</a>
-          <a href="{% url 'search:assigned_sections_view' %}">Gradebook</a>
-        {% else %}
-          <a href="{% url 'accounts:profile_view' %}">My profile</a>
-          <a href="{% url 'registration:open_sections_view' %}">Register courses</a>
-          <a href="{% url 'grades:student_results_view' %}">Academic results</a>
+          {# Bảng điểm mở từ trang này (mỗi section có liên kết vào bảng điểm), nên không có mục "Gradebook" riêng #}
+          <a href="{% url 'search:assigned_sections_view' %}"{% if current == 'search:assigned_sections_view' %} class="active" aria-current="page"{% endif %}>Assigned sections</a>
+          <a href="{% url 'search:student_search_view' %}"{% if current == 'search:student_search_view' %} class="active" aria-current="page"{% endif %}>Search students</a>
+        {% elif request.user.role == "STUDENT" %}
+          <a href="{% url 'accounts:profile_view' %}"{% if current == 'accounts:profile_view' %} class="active" aria-current="page"{% endif %}>My profile</a>
+          <a href="{% url 'registration:open_sections_view' %}"{% if current == 'registration:open_sections_view' %} class="active" aria-current="page"{% endif %}>Register courses</a>
+          <a href="{% url 'registration:registered_sections_view' %}"{% if current == 'registration:registered_sections_view' %} class="active" aria-current="page"{% endif %}>My registrations</a>
+          <a href="{% url 'grades:student_results_view' %}"{% if current == 'grades:student_results_view' %} class="active" aria-current="page"{% endif %}>Academic results</a>
         {% endif %}
       </nav>
-      {% if request.user.is_authenticated %}
-        <div class="who">
-          <div><b>{{ request.user.full_name|default:request.user.username }}</b><small>{{ request.user.username }}</small></div>
-          <form method="post" action="{% url 'accounts:logout_view' %}">
-            {% csrf_token %}
-            <button class="btn sm" type="submit" name="logout" value="1" onclick="this.form.submit()">Log out</button>
-          </form>
-        </div>
-      {% endif %}
+      <div class="who">
+        <div><b>{{ request.user.full_name|default:request.user.username }}</b><small>{{ request.user.username }}</small></div>
+        <form method="post" action="{% url 'accounts:logout_view' %}">
+          {% csrf_token %}
+          <button class="btn sm" type="submit">Log out</button>
+        </form>
+      </div>
     </aside>
     <main class="main">
-      {% if messages %}{% for m in messages %}<div class="notice {% if m.tags == 'error' %}bad{% else %}ok{% endif %}">{{ m }}</div>{% endfor %}{% endif %}
-      {% if error %}<div class="notice bad">{{ error }}</div>{% endif %}
+  {% else %}
+  <div class="shell shell-public">
+    <main class="main">
+  {% endif %}
+      {% if messages %}{% for m in messages %}<div class="notice {% if 'error' in m.tags %}bad{% else %}ok{% endif %}" role="{% if 'error' in m.tags %}alert{% else %}status{% endif %}">{{ m }}</div>{% endfor %}{% endif %}
+      {% if error %}<div class="notice bad" role="alert">{{ error }}</div>{% endif %}
       {% block content %}{% endblock %}
     </main>
   </div>
+{% endwith %}
   <script src="{% static 'sms/app.js' %}?v=5"></script>
   {% block extra_scripts %}{% endblock %}
 </body>

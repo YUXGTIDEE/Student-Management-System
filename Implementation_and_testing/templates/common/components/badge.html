@@ -1,6 +1,5 @@
-
 {% comment %}
-  templates/common/components/badge.html  (Bình)  – nhãn nhỏ có màu cho một giá trị trạng thái (Bootstrap 5.2+).
+  templates/common/components/badge.html  (Đạt)  – nhãn nhỏ có màu cho một giá trị trạng thái, dùng lớp .chip của app.css.
 
   Cách dùng:
     {% include "common/components/badge.html" with kind="status"     value=s.academic_status %}
@@ -9,42 +8,41 @@
     {% include "common/components/badge.html" with kind="enrollment" value=e.status %}
     {% include "common/components/badge.html" with kind="grade"      value=row.letter_grade %}
 
-  kind        giá trị nhận vào                                 hiển thị
-  status      ENROLLED / WITHDRAWN / TEMPORARILY_SUSPENDED / GRADUATED   Enrolled, Withdrawn, Temporarily suspended, Graduated
-  role        STUDENT / TEACHER / ADMINISTRATOR                Student, Teacher, Administrator
-  account     is_locked (True / False)                         Locked / Active
-  enrollment  REGISTERED / CANCELLED                           Registered, Cancelled
-  grade       A / B / C / D / F                                chính chữ đó
+  kind        giá trị nhận vào                                           hiển thị (màu)
+  status      ENROLLED / WITHDRAWN / TEMPORARILY_SUSPENDED / GRADUATED   Enrolled (xanh lá), Withdrawn (đỏ), Temporarily suspended (vàng), Graduated (xanh dương)
+  role        STUDENT / TEACHER / ADMINISTRATOR                          Student (xanh dương), Teacher (xanh lá), Administrator (xám)
+  account     is_locked (True / False)                                   Locked (đỏ) / Active (xanh lá)
+  enrollment  REGISTERED / CANCELLED                                     Registered (xanh lá), Cancelled (xám)
+  grade       A / B / C / D / F                                          chữ đó: A xanh lá, B xanh dương, C xám, D vàng, F đỏ
 
-  Giá trị rỗng (None, "") hiển thị dấu "–"  (ví dụ chưa có điểm chữ).
-  Giá trị lạ (không có trong bảng) được in nguyên văn với màu xám, không làm vỡ trang.
+  Giá trị rỗng (None, "") hiển thị dấu "–". Giá trị lạ được in nguyên văn với màu xám, không làm vỡ trang.
 {% endcomment %}
 {% if kind == "account" %}
-  {% if value %}<span class="badge text-bg-danger">Locked</span>{% else %}<span class="badge text-bg-success">Active</span>{% endif %}
+  {% if value %}<span class="chip bad">Locked</span>{% else %}<span class="chip ok">Active</span>{% endif %}
 {% elif not value %}
-  <span class="text-muted">–</span>
+  <span class="hint">–</span>
 {% elif kind == "status" %}
-  {% if value == "ENROLLED" %}<span class="badge text-bg-success">Enrolled</span>
-  {% elif value == "WITHDRAWN" %}<span class="badge text-bg-danger">Withdrawn</span>
-  {% elif value == "TEMPORARILY_SUSPENDED" %}<span class="badge text-bg-warning">Temporarily suspended</span>
-  {% elif value == "GRADUATED" %}<span class="badge text-bg-primary">Graduated</span>
-  {% else %}<span class="badge text-bg-secondary">{{ value }}</span>{% endif %}
+  {% if value == "ENROLLED" %}<span class="chip ok">Enrolled</span>
+  {% elif value == "WITHDRAWN" %}<span class="chip bad">Withdrawn</span>
+  {% elif value == "TEMPORARILY_SUSPENDED" %}<span class="chip warn">Temporarily suspended</span>
+  {% elif value == "GRADUATED" %}<span class="chip info">Graduated</span>
+  {% else %}<span class="chip">{{ value }}</span>{% endif %}
 {% elif kind == "role" %}
-  {% if value == "STUDENT" %}<span class="badge text-bg-info">Student</span>
-  {% elif value == "TEACHER" %}<span class="badge text-bg-primary">Teacher</span>
-  {% elif value == "ADMINISTRATOR" %}<span class="badge text-bg-dark">Administrator</span>
-  {% else %}<span class="badge text-bg-secondary">{{ value }}</span>{% endif %}
+  {% if value == "STUDENT" %}<span class="chip info">Student</span>
+  {% elif value == "TEACHER" %}<span class="chip ok">Teacher</span>
+  {% elif value == "ADMINISTRATOR" %}<span class="chip">Administrator</span>
+  {% else %}<span class="chip">{{ value }}</span>{% endif %}
 {% elif kind == "enrollment" %}
-  {% if value == "REGISTERED" %}<span class="badge text-bg-success">Registered</span>
-  {% elif value == "CANCELLED" %}<span class="badge text-bg-secondary">Cancelled</span>
-  {% else %}<span class="badge text-bg-secondary">{{ value }}</span>{% endif %}
+  {% if value == "REGISTERED" %}<span class="chip ok">Registered</span>
+  {% elif value == "CANCELLED" %}<span class="chip">Cancelled</span>
+  {% else %}<span class="chip">{{ value }}</span>{% endif %}
 {% elif kind == "grade" %}
-  {% if value == "A" %}<span class="badge text-bg-success">A</span>
-  {% elif value == "B" %}<span class="badge text-bg-primary">B</span>
-  {% elif value == "C" %}<span class="badge text-bg-info">C</span>
-  {% elif value == "D" %}<span class="badge text-bg-warning">D</span>
-  {% elif value == "F" %}<span class="badge text-bg-danger">F</span>
-  {% else %}<span class="badge text-bg-secondary">{{ value }}</span>{% endif %}
+  {% if value == "A" %}<span class="chip ok">A</span>
+  {% elif value == "B" %}<span class="chip info">B</span>
+  {% elif value == "C" %}<span class="chip">C</span>
+  {% elif value == "D" %}<span class="chip warn">D</span>
+  {% elif value == "F" %}<span class="chip bad">F</span>
+  {% else %}<span class="chip">{{ value }}</span>{% endif %}
 {% else %}
-  <span class="badge text-bg-secondary">{{ value }}</span>
+  <span class="chip">{{ value }}</span>
 {% endif %}

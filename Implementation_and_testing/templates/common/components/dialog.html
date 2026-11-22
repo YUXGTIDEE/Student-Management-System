@@ -1,64 +1,73 @@
-
 {% comment %}
-  templates/common/components/dialog.html  (Bình)  – hộp thoại xác nhận dùng chung (Bootstrap 5 modal).
+  templates/common/components/dialog.html  (Đạt)  – hộp thoại xác nhận dùng chung, dùng .dim và .dlg của app.css (không cần Bootstrap).
+  base.html đã include sẵn cho mọi trang sau đăng nhập. Muốn form nào hỏi xác nhận chỉ cần thêm thuộc tính data-confirm:
 
-  Cách dùng (2 bước):
-  1) Đặt MỘT lần trong trang (hoặc trong base.html, trước </body>, sau dòng nạp Bootstrap JS):
-       {% include "common/components/dialog.html" %}
-  2) Với form cần xác nhận, chỉ thêm thuộc tính data-confirm. Không cần viết JS:
-       <form method="post" action="{% url 'accounts:account_status_view' a.id %}"
-             data-confirm="Lock account {{ a.username }}?" data-confirm-title="Lock account"
-             data-confirm-button="Lock" data-confirm-style="danger">
-         {% csrf_token %}
-         <input type="hidden" name="action" value="lock">
-         <button class="btn btn-sm btn-outline-danger">Lock</button>
-       </form>
+    <form method="post" action="{% url 'accounts:account_status_view' a.id %}"
+          data-confirm="Lock account {{ a.username }}?" data-confirm-title="Lock account"
+          data-confirm-button="Lock" data-confirm-style="danger">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="lock">
+      <button class="btn sm" type="submit">Lock</button>
+    </form>
 
   Thuộc tính trên <form>:
-    data-confirm          (bắt buộc) câu hỏi hiển thị trong hộp thoại
-    data-confirm-title    tiêu đề hộp thoại (mặc định "Please confirm")
+    data-confirm          (bắt buộc) câu hỏi hiển thị
+    data-confirm-title    tiêu đề (mặc định "Please confirm")
     data-confirm-button   chữ trên nút xác nhận (mặc định "Confirm")
-    data-confirm-style    màu nút xác nhận: primary | danger | warning ... (mặc định primary)
-    data-confirm-reason   tên ô cần nhập lý do, ví dụ "reason" (UC mở khóa bảng điểm). Hộp thoại sẽ hiện ô nhập
-                          bắt buộc và gửi giá trị đó kèm form dưới tên này.
+    data-confirm-style    "danger" cho nút đỏ; khác hoặc bỏ trống = nút xanh
+    data-confirm-reason   tên ô cần nhập lý do, ví dụ "reason" (mở khóa bảng điểm): hộp thoại hiện ô nhập bắt buộc
+                          và gửi giá trị đó kèm form dưới tên này.
 
-  Nút bấm (name/value của nút submit) vẫn được gửi đi bình thường.
-  Nếu Bootstrap JS chưa nạp, tự dùng hộp thoại confirm() của trình duyệt (ô lý do dùng prompt()).
-  Nếu tắt JavaScript hoàn toàn thì form gửi thẳng, không hỏi lại – server vẫn kiểm tra mọi thứ.
+  Nút bấm (name/value của nút submit) vẫn được gửi đi. Esc hoặc bấm nền tối thì hủy.
+  Nếu tắt JavaScript, form gửi thẳng không hỏi lại (server vẫn kiểm tra mọi thứ).
 {% endcomment %}
-<div class="modal fade" id="confirm-dialog" tabindex="-1" aria-labelledby="confirm-dialog-title" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="confirm-dialog-title">Please confirm</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p id="confirm-dialog-message" class="mb-0"></p>
-        <div id="confirm-dialog-reason-box" class="mt-3 d-none">
-          <label for="confirm-dialog-reason" class="form-label">Reason</label>
-          <textarea id="confirm-dialog-reason" class="form-control" rows="3" maxlength="255"></textarea>
-          <div class="invalid-feedback">Please enter a reason.</div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="confirm-dialog-ok">Confirm</button>
-      </div>
+<div class="dim modal" id="confirm-dialog" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="confirm-dialog-title" aria-describedby="confirm-dialog-message">
+    <h2 id="confirm-dialog-title">Please confirm</h2>
+    <p id="confirm-dialog-message"></p>
+    <div class="field" id="confirm-dialog-reason-box" hidden>
+      <label for="confirm-dialog-reason">Reason</label>
+      <textarea id="confirm-dialog-reason" maxlength="255"></textarea>
+      <span class="err" id="confirm-dialog-reason-err" hidden>Please enter a reason.</span>
+    </div>
+    <div class="row">
+      <button type="button" class="btn" id="confirm-dialog-cancel">Cancel</button>
+      <button type="button" class="btn pri" id="confirm-dialog-ok">Confirm</button>
     </div>
   </div>
 </div>
 <script>
 (function () {
-  var el = document.getElementById("confirm-dialog");
-  var pending = null;                      // {form, submitter}
+  var overlay = document.getElementById("confirm-dialog");
+  if (!overlay) return;
+  var title = overlay.querySelector("#confirm-dialog-title"),
+      message = overlay.querySelector("#confirm-dialog-message"),
+      okButton = overlay.querySelector("#confirm-dialog-ok"),
+      cancelButton = overlay.querySelector("#confirm-dialog-cancel"),
+      reasonBox = overlay.querySelector("#confirm-dialog-reason-box"),
+      reason = overlay.querySelector("#confirm-dialog-reason"),
+      reasonErr = overlay.querySelector("#confirm-dialog-reason-err");
+  var pending = null, opener = null;
 
-  function withBootstrap() { return window.bootstrap && window.bootstrap.Modal; }
+  function open(form, submitter) {
+    pending = { form: form, submitter: submitter };
+    opener = document.activeElement;
+    title.textContent = form.getAttribute("data-confirm-title") || "Please confirm";
+    message.textContent = form.getAttribute("data-confirm");            // textContent: không chèn HTML
+    okButton.textContent = form.getAttribute("data-confirm-button") || "Confirm";
+    okButton.className = "btn " + (form.getAttribute("data-confirm-style") === "danger" ? "danger" : "pri");
+    var needsReason = !!form.getAttribute("data-confirm-reason");
+    reasonBox.hidden = !needsReason;
+    reasonErr.hidden = true;
+    reason.value = "";
+    overlay.hidden = false;
+    (needsReason ? reason : cancelButton).focus();                       // mặc định đặt tiêu điểm ở nút an toàn
+  }
 
-  function submitPending() {
-    var form = pending.form, submitter = pending.submitter;
-    form.dataset.confirmed = "1";
-    if (form.requestSubmit) { form.requestSubmit(submitter || undefined); } else { form.submit(); }
+  function close() {
+    overlay.hidden = true;
+    pending = null;
+    if (opener && opener.focus) opener.focus();
   }
 
   function setReasonField(form, name, value) {
@@ -78,44 +87,34 @@
     if (!form.hasAttribute || !form.hasAttribute("data-confirm")) return;
     if (form.dataset.confirmed) { delete form.dataset.confirmed; return; }   // đã xác nhận -> cho gửi
     event.preventDefault();
-    pending = { form: form, submitter: event.submitter };
-    var reasonName = form.getAttribute("data-confirm-reason");
-
-    if (!withBootstrap() || !el) {                          // dự phòng khi chưa có Bootstrap JS
-      var ok = window.confirm(form.getAttribute("data-confirm"));
-      if (ok && reasonName) {
-        var text = (window.prompt("Reason:") || "").trim();
-        if (!text) return;
-        setReasonField(form, reasonName, text);
-      }
-      if (ok) submitPending();
-      return;
-    }
-
-    el.querySelector("#confirm-dialog-title").textContent = form.getAttribute("data-confirm-title") || "Please confirm";
-    el.querySelector("#confirm-dialog-message").textContent = form.getAttribute("data-confirm");    // textContent: không chèn HTML
-    var ok = el.querySelector("#confirm-dialog-ok");
-    ok.textContent = form.getAttribute("data-confirm-button") || "Confirm";
-    ok.className = "btn btn-" + (form.getAttribute("data-confirm-style") || "primary");
-    var box = el.querySelector("#confirm-dialog-reason-box"), area = el.querySelector("#confirm-dialog-reason");
-    box.classList.toggle("d-none", !reasonName);
-    area.value = ""; area.classList.remove("is-invalid");
-    window.bootstrap.Modal.getOrCreateInstance(el).show();
+    open(form, event.submitter);
   });
 
-  if (el) {
-    el.querySelector("#confirm-dialog-ok").addEventListener("click", function () {
-      if (!pending) return;
-      var reasonName = pending.form.getAttribute("data-confirm-reason");
-      if (reasonName) {
-        var area = el.querySelector("#confirm-dialog-reason"), text = area.value.trim();
-        if (!text) { area.classList.add("is-invalid"); area.focus(); return; }
-        setReasonField(pending.form, reasonName, text);
-      }
-      window.bootstrap.Modal.getOrCreateInstance(el).hide();
-      submitPending();
-    });
-    el.addEventListener("hidden.bs.modal", function () { pending = null; });
-  }
+  okButton.addEventListener("click", function () {
+    if (!pending) return;
+    var form = pending.form, submitter = pending.submitter, name = form.getAttribute("data-confirm-reason");
+    if (name) {
+      var text = reason.value.trim();
+      if (!text) { reasonErr.hidden = false; reason.classList.add("bad"); reason.focus(); return; }
+      setReasonField(form, name, text);
+    }
+    overlay.hidden = true;
+    pending = null;
+    form.dataset.confirmed = "1";
+    if (form.requestSubmit) { form.requestSubmit(submitter || undefined); } else { form.submit(); }
+  });
+
+  cancelButton.addEventListener("click", close);
+  overlay.addEventListener("mousedown", function (event) { if (event.target === overlay) close(); });
+  document.addEventListener("keydown", function (event) {
+    if (overlay.hidden) return;
+    if (event.key === "Escape") { close(); return; }
+    if (event.key === "Tab") {                                           // giữ tiêu điểm trong hộp thoại
+      var items = Array.prototype.filter.call(overlay.querySelectorAll("button, textarea"), function (el) { return !el.closest("[hidden]"); });
+      var first = items[0], last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  });
 })();
 </script>

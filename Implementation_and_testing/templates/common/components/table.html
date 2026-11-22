@@ -1,47 +1,46 @@
-
 {% comment %}
-  templates/common/components/table.html  (Bình)  – bảng dữ liệu đơn giản có dòng "không có dữ liệu" (Bootstrap 5).
+  templates/common/components/table.html  (Đạt)  – bảng dữ liệu đơn giản có dòng "không có dữ liệu", dùng .tw và table.t của app.css.
 
   Cách dùng:
     {% include "common/components/table.html" with headers=headers rows=rows empty_message="No students found" %}
 
-  Tham số:
-    headers        (bắt buộc) danh sách tiêu đề cột, ví dụ ["Code", "Name", "Class"]
-    rows           (bắt buộc) danh sách các dòng; mỗi dòng là một danh sách ô, cùng thứ tự với headers.
-                   Ô None hoặc rỗng hiển thị "–". Nội dung ô là văn bản thuần (Django tự escape).
-    empty_message  (tùy chọn) chữ hiển thị khi rows rỗng (mặc định "No data found")
-    caption        (tùy chọn) chú thích bảng, dùng cho trình đọc màn hình
+  headers        (bắt buộc) danh sách tiêu đề cột, ví dụ ["Code", "Name", "Class"]
+  rows           (bắt buộc) danh sách các dòng; mỗi dòng là danh sách ô cùng thứ tự với headers.
+                 Ô None hoặc rỗng hiển thị "–". Nội dung ô là văn bản thuần (Django tự escape).
+  empty_message  (tùy chọn) chữ hiển thị khi rows rỗng (mặc định "No data found")
+  caption        (tùy chọn) chú thích bảng cho trình đọc màn hình
 
-  Component này chỉ dành cho bảng đơn giản chứa văn bản. Cột có liên kết, badge hoặc nút (đa số các
-  trang danh sách) thì tự viết <tbody> với cùng khung dưới đây để các trang trông giống nhau:
+  Chỉ dành cho bảng chứa văn bản thuần. Cột có liên kết, badge hoặc nút (đa số trang danh sách) thì tự viết
+  <tbody> với cùng khung dưới đây để các trang giống nhau:
 
-    <div class="table-responsive">
-      <table class="table table-hover align-middle">
-        <thead class="table-light"><tr><th scope="col">Code</th>...</tr></thead>
+    <div class="tw">
+      <table class="t">
+        <thead><tr><th>Code</th><th>Name</th><th>Status</th></tr></thead>
         <tbody>
           {% for s in students %}
             <tr>
-              <td><a href="{% url 'search:student_detail_view' s.student_id %}">{{ s.student_code }}</a></td>
+              <td class="mono"><a href="{% url 'search:student_detail_view' s.student_id %}">{{ s.student_code }}</a></td>
+              <td>{{ s.full_name }}</td>
               <td>{% include "common/components/badge.html" with kind="status" value=s.academic_status %}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="5" class="text-center text-muted py-4">No students found</td></tr>
+            <tr><td colspan="3" class="hint">No students found</td></tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
 {% endcomment %}
-<div class="table-responsive">
-  <table class="table table-hover align-middle">
-    {% if caption %}<caption>{{ caption }}</caption>{% endif %}
-    <thead class="table-light">
+<div class="tw">
+  <table class="t">
+    {% if caption %}<caption class="hint">{{ caption }}</caption>{% endif %}
+    <thead>
       <tr>{% for h in headers %}<th scope="col">{{ h }}</th>{% endfor %}</tr>
     </thead>
     <tbody>
       {% for row in rows %}
-        <tr>{% for cell in row %}<td>{% if cell is None or cell == "" %}<span class="text-muted">–</span>{% else %}{{ cell }}{% endif %}</td>{% endfor %}</tr>
+        <tr>{% for cell in row %}<td>{% if cell is None or cell == "" %}<span class="hint">–</span>{% else %}{{ cell }}{% endif %}</td>{% endfor %}</tr>
       {% empty %}
-        <tr><td colspan="{{ headers|length|default:1 }}" class="text-center text-muted py-4">{{ empty_message|default:"No data found" }}</td></tr>
+        <tr><td colspan="{{ headers|length|default:1 }}" class="hint">{{ empty_message|default:"No data found" }}</td></tr>
       {% endfor %}
     </tbody>
   </table>

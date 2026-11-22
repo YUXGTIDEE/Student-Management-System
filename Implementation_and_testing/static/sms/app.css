@@ -96,3 +96,9 @@ table.t{width:100%;border-collapse:collapse}
 .toast.ok{background:var(--ok)}
 .toast.bad{background:var(--bad)}
 @media (max-width:760px){.side{flex-basis:100%;border-right:0;border-bottom:1px solid var(--line)}.main{padding:20px 16px}.auth{flex-wrap:wrap;height:auto;min-height:100vh}.auth .hero{min-height:260px;padding:36px 24px}.auth .form{min-height:460px;padding:36px 24px}}
+[hidden]{display:none!important}
+.toasts{position:fixed;top:24px;right:24px;z-index:1000;display:flex;flex-direction:column;gap:10px;max-width:min(420px,calc(100vw - 48px))}
+.toasts .toast{position:static;max-width:none}
+.dim.modal{position:fixed;inset:0;z-index:1100}
+.pager .row{gap:6px}
+a:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
