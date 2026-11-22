@@ -32,6 +32,7 @@
           {# Bảng điểm mở từ trang này (mỗi section có liên kết vào bảng điểm), nên không có mục "Gradebook" riêng #}
           <a href="{% url 'search:assigned_sections_view' %}"{% if current == 'search:assigned_sections_view' %} class="active" aria-current="page"{% endif %}>Assigned sections</a>
           <a href="{% url 'search:student_search_view' %}"{% if current == 'search:student_search_view' %} class="active" aria-current="page"{% endif %}>Search students</a>
+          
         {% elif request.user.role == "STUDENT" %}
           <a href="{% url 'accounts:profile_view' %}"{% if current == 'accounts:profile_view' %} class="active" aria-current="page"{% endif %}>My profile</a>
           <a href="{% url 'registration:open_sections_view' %}"{% if current == 'registration:open_sections_view' %} class="active" aria-current="page"{% endif %}>Register courses</a>
