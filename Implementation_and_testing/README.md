@@ -1,84 +1,164 @@
-# Nhóm … – Student Management System (Django + MySQL)
+# Student Management System
 
-## Các phần trong project
+Hệ thống quản lý sinh viên được xây dựng bằng Django, MySQL và giao diện
+server-rendered. Ứng dụng hỗ trợ các vai trò **quản trị viên**, **giảng viên**
+và **sinh viên**.
 
-| Thư mục / file | Backend | Frontend | Trạng thái |
-|---|---|---|---|
-| `common/contract.py` | **Cả nhóm** (hợp đồng chung, **không tự ý sửa**) | | Đã chốt |
-| `common/permissions.py`, `common/pagination.py` | Bình | | File khung (TODO) |
-| `config/`, `*/models.py`, migration, seed | **Bình** (chỉ Bình sửa) | | Models đã viết, migration chưa tạo |
-| `accounts/` (đăng nhập, hồ sơ, tài khoản) | Bình | Đạt: Login/Reset · Huy: hồ sơ SV · Thành: 5.1, 5.2 | File khung (TODO) |
-| `search/` (tìm kiếm, lọc, hồ sơ chi tiết, DS phân công) | Bình | Đạt: 4.1, 4.2, 4.3 | File khung (TODO) |
-| `students/` (hồ sơ SV, trạng thái học tập) | Minh | Thành: 5.3 | File khung (TODO) |
-| `courses/` (course, section, trùng lịch) | Minh | Thành: 5.4, 5.5, 5.6 | File khung (TODO) |
-| `registration/` (đăng ký, hủy) | Duy | Huy: 3.3 – 3.6 | File khung (TODO) |
-| `grades/` (nhập điểm, tính điểm, khóa/mở khóa, xem điểm) | Duy | Đạt: 4.4, 4.5 · Thành: 5.7 · Huy: 3.7 | File khung (TODO) |
-| `templates/common/` (layout, sidebar, component) | | **Đạt**  | File khung (TODO) |
-| `docs/api/*.md` | cặp BE–FE cùng viết 
-| Test case, test tải, test đồng thời | Giai đoạn 2: test chéo (xem `docs/TEST_PLAN.md`) | | – |
+## Tính năng chính
 
-Mỗi người **chỉ sửa file của mình**. Hàm nào còn là khung sẽ báo `[CHƯA CÀI ĐẶT] tên_hàm()`, project vẫn import và chạy bình thường.
+- Đăng nhập, đăng xuất, khóa tài khoản và phân quyền theo vai trò.
+- Quản lý hồ sơ sinh viên, giảng viên, môn học, học kỳ và lớp học phần.
+- Tìm kiếm và lọc dữ liệu theo các tiêu chí của từng vai trò.
+- Đăng ký, hủy đăng ký và kiểm tra sức chứa lớp học phần.
+- Quản lý bảng điểm, tính điểm tổng kết, điểm chữ và GPA.
+- Kiểm tra môn tiên quyết, trùng lịch và các quy tắc trạng thái học tập.
+- Dữ liệu mẫu và bộ kiểm thử tự động cho các luồng chính.
 
-## Tài liệu
-- `docs/ARCHITECTURE.md`: kiến trúc Client–Server, trách nhiệm từng tầng, luồng request.
-- `docs/WORK_BREAKDOWN.md`: danh sách task chi tiết từng người (mã task, UC, tiêu chí xong, ngày) và kế hoạch test giai đoạn 2.
+## Công nghệ
 
-## Cách bắt đầu viết phần của mình
-1. Đọc `common/contract.py` và `DECISIONS.md`.
-2. **Backend:** mở `<app>/services.py` của mình, đọc docstring từng hàm (có ghi UC, lỗi cần ném), viết code thay cho dòng `not_implemented(...)`, **giữ nguyên tên hàm, tham số**. Sau đó nối vào `<app>/views.py`.
-3. **Frontend:** mở `templates/<app>/*.html`, đọc comment TODO và `docs/api/<app>.md` để biết dữ liệu nhận được. Trong lúc BE chưa xong, render với dữ liệu giả đúng cấu trúc.
-4. Chạy thử, tự viết unit test trong `<app>/tests/` cho logic của mình, rồi mở pull request.
+- Python 3.12
+- Django 5.x
+- MySQL 8.0
+- pytest và pytest-django
+- Docker Compose (tùy chọn)
 
-## Chạy dự án
+## Cấu trúc dự án
 
-### Windows (PowerShell)
+| Thư mục | Mục đích |
+|---|---|
+| `accounts/` | Người dùng, đăng nhập, tài khoản và phân quyền |
+| `students/` | Hồ sơ và trạng thái học tập của sinh viên |
+| `courses/` | Môn học, học kỳ, lớp học phần và lịch học |
+| `registration/` | Đăng ký và hủy đăng ký học phần |
+| `grades/` | Bảng điểm, tính điểm và GPA |
+| `search/` | Tìm kiếm và lọc dữ liệu |
+| `common/` | Hợp đồng dùng chung, phân trang và permission |
+| `templates/` | Giao diện HTML |
+| `static/` | CSS và JavaScript |
+| `docs/` | Kế hoạch kiểm thử và phân rã công việc |
+
+## Yêu cầu
+
+- Python 3.12 trở lên.
+- MySQL 8.0 trở lên đang chạy ở cổng `3307`, hoặc Docker Desktop nếu dùng
+  Docker Compose.
+- Git.
+
+## Cài đặt và chạy local
+
+Mở PowerShell trong thư mục `Implementation_and_testing`:
 
 ```powershell
-cd "C:\Users\Dat\Downloads\Student-Management-System-main\Implementation_and_testing"
-
-Copy-Item .env.example .env
-docker compose up -d
-
-py -m venv .venv
+py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-py -m pip install -r requirements.txt
-
-py manage.py migrate
-py manage.py seed
-py manage.py runserver 127.0.0.1:8000
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
 
-Sau đó mở:
-
-- http://127.0.0.1:8000/accounts/login/
-- Tài khoản mẫu: `AD001 / Pass1234` (admin), `GV001 / Pass1234` (giảng viên), `100001 / Pass1234` (sinh viên).
-
-Nếu PowerShell không chạy script activate vì policy, có thể dùng:
+Chỉnh các biến kết nối MySQL trong `.env`, sau đó chạy migration và tạo dữ liệu
+mẫu:
 
 ```powershell
-.\.venv\Scripts\activate.bat
-```
-
-Hoặc chạy trực tiếp lệnh trong môi trường bằng `py` mà không cần activate.
-
-### macOS/Linux
-
-```bash
-cp .env.example .env
-docker compose up -d
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
 python manage.py migrate
 python manage.py seed
 python manage.py runserver
 ```
 
-Dừng server bằng `Ctrl+C`. Dừng MySQL bằng `docker compose stop`.
+Mở ứng dụng tại <http://127.0.0.1:8000/>.
 
-## Quy ước chung
-- **Chỉ Hoa Binh sửa model và migration.** Cần thêm cột thì nhắn Hoa Binh.
-- Mọi view phải có `@role_required(...)`; **kiểm tra quyền ở server**, không chỉ ẩn nút ở giao diện.
-- Số lượng chỗ (`current_enrollment`) chỉ cập nhật bằng câu lệnh nguyên tử trong transaction.
+Nếu PowerShell chặn việc kích hoạt virtual environment, có thể chạy trực tiếp
+các lệnh bằng `py -3.12`, hoặc dùng:
+
+```powershell
+.\.venv\Scripts\activate.bat
+```
+
+### Cấu hình database mặc định
+
+File `.env.example` dùng các giá trị sau:
+
+| Biến | Giá trị mặc định |
+|---|---|
+| `DB_NAME` | `student_mgmt` |
+| `DB_USER` | `sms_user` |
+| `DB_HOST` | `127.0.0.1` |
+| `DB_PORT` | `3307` |
+| `DEBUG` | `1` |
+
+Không commit file `.env` hoặc mật khẩu thật lên repository.
+
+## Chạy bằng Docker Compose
+
+Docker Compose khởi động MySQL và web app:
+
+```powershell
+Copy-Item .env.example .env
+docker compose up --build
+```
+
+Sau khi các container sẵn sàng, mở <http://127.0.0.1:8000/>.
+
+Các lệnh thường dùng:
+
+```powershell
+docker compose ps
+docker compose logs -f web
+docker compose stop
+docker compose down
+```
+
+Muốn xóa cả dữ liệu MySQL trong volume, chỉ thực hiện khi chắc chắn không cần
+dữ liệu hiện tại:
+
+```powershell
+docker compose down -v
+```
+
+## Tài khoản dữ liệu mẫu
+
+Lệnh `python manage.py seed` có thể chạy lại nhiều lần và tạo dữ liệu mẫu cho
+toàn bộ luồng chính. Mật khẩu mặc định của các tài khoản mẫu là `Pass1234`:
+
+| Tài khoản | Vai trò |
+|---|---|
+| `AD001` | Quản trị viên |
+| `GV001` | Giảng viên |
+| `100001` | Sinh viên |
 
 
+## Kiểm thử
+
+Chạy toàn bộ test:
+
+```powershell
+pytest
+```
+
+Chạy một nhóm test cụ thể:
+
+```powershell
+pytest accounts/tests
+pytest grades/tests/test_calculator.py
+```
+
+Một số test được đánh dấu `skip` vì phụ thuộc vào phần triển khai chưa hoàn
+thành. Xem [docs/TEST_PLAN.md](docs/TEST_PLAN.md) để biết phạm vi và kế hoạch
+kiểm thử chéo.
+
+## Quy ước phát triển
+
+- Đọc [DECISIONS.md](DECISIONS.md) và [common/contract.py](common/contract.py)
+  trước khi thay đổi logic dùng chung.
+- Giữ nguyên tên hàm, tham số và cấu trúc dữ liệu đã được các app sử dụng.
+- Kiểm tra quyền ở phía server; không chỉ ẩn nút trên giao diện.
+- Các thay đổi số lượng đăng ký phải được thực hiện trong transaction và bảo
+  đảm an toàn khi có nhiều request đồng thời.
+- Thay đổi model phải đi kèm migration và test phù hợp.
+- Không đưa secret, file `.env`, dữ liệu cá nhân thật hoặc file build vào Git.
+
+## Tài liệu liên quan
+
+- [Kế hoạch kiểm thử](docs/TEST_PLAN.md)
+- [Phân rã công việc](docs/WORK_BREAKDOWN.md)
+- [Các quyết định thiết kế](DECISIONS.md)
+- [Đặc tả và thiết kế hệ thống](../Requirement%20Specification%20and%20Design%20Document/)
