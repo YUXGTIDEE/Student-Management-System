@@ -1,62 +1,99 @@
-# Student Management System
+# Implementation and Testing
 
-Hệ thống quản lý sinh viên được xây dựng bằng Django, MySQL và giao diện
-server-rendered. Ứng dụng hỗ trợ các vai trò **quản trị viên**, **giảng viên**
-và **sinh viên**.
+This directory contains the executable Django application, database
+migrations, Docker configuration, source code, and automated tests for the
+Student Management System.
 
-## Tính năng chính
+For project-wide requirements, architecture, diagrams, and documentation,
+see the [root README](../README.md).
 
-- Đăng nhập, đăng xuất, khóa tài khoản và phân quyền theo vai trò.
-- Quản lý hồ sơ sinh viên, giảng viên, môn học, học kỳ và lớp học phần.
-- Tìm kiếm và lọc dữ liệu theo các tiêu chí của từng vai trò.
-- Đăng ký, hủy đăng ký và kiểm tra sức chứa lớp học phần.
-- Quản lý bảng điểm, tính điểm tổng kết, điểm chữ và GPA.
-- Kiểm tra môn tiên quyết, trùng lịch và các quy tắc trạng thái học tập.
-- Dữ liệu mẫu và bộ kiểm thử tự động cho các luồng chính.
-
-## Công nghệ
+## Technology
 
 - Python 3.12
 - Django 5.x
 - MySQL 8.0
-- pytest và pytest-django
-- Docker Compose (tùy chọn)
+- pytest and pytest-django
+- Docker Compose
+- Gunicorn and WhiteNoise
 
-## Cấu trúc dự án
+## Main Features
 
-| Thư mục | Mục đích |
+- Login, logout, account locking, password management, and role-based
+  authorization.
+- Administrator, teacher, and student profiles.
+- Course, semester, and course-section management.
+- Student search and filtering.
+- Course registration and cancellation.
+- Grade entry, grade conversion, GPA calculation, and gradebook locking.
+- Sample data generation and database migrations.
+
+## Project Structure
+
+| Directory | Purpose |
 |---|---|
-| `accounts/` | Người dùng, đăng nhập, tài khoản và phân quyền |
-| `students/` | Hồ sơ và trạng thái học tập của sinh viên |
-| `courses/` | Môn học, học kỳ, lớp học phần và lịch học |
-| `registration/` | Đăng ký và hủy đăng ký học phần |
-| `grades/` | Bảng điểm, tính điểm và GPA |
-| `search/` | Tìm kiếm và lọc dữ liệu |
-| `common/` | Hợp đồng dùng chung, phân trang và permission |
-| `templates/` | Giao diện HTML |
-| `static/` | CSS và JavaScript |
-| `docs/` | Kế hoạch kiểm thử và phân rã công việc |
+| `accounts/` | Authentication, roles, accounts, and sample data |
+| `students/` | Student profiles and academic status |
+| `courses/` | Courses, semesters, course sections, and schedules |
+| `registration/` | Course registration and cancellation |
+| `grades/` | Grades, final scores, GPA, and gradebooks |
+| `search/` | Student search and filtering |
+| `common/` | Shared permissions, pagination, contracts, and utilities |
+| `templates/` | Django HTML templates |
+| `static/` | CSS and JavaScript assets |
+| `docs/` | Test plan and work breakdown |
+| `config/` | Django settings and URL configuration |
 
-## Yêu cầu
+## Prerequisites
 
-- Python 3.12 trở lên.
-- MySQL 8.0 trở lên đang chạy ở cổng `3307`, hoặc Docker Desktop nếu dùng
-  Docker Compose.
+- Python 3.12 or newer.
+- MySQL 8.0 or Docker Desktop.
 - Git.
+- PowerShell on Windows.
 
-## Cài đặt và chạy local
+## Environment Configuration
 
-Mở PowerShell trong thư mục `Implementation_and_testing`:
+All commands below must be run from this directory.
 
 ```powershell
+cd Implementation_and_testing
+
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Chỉnh các biến kết nối MySQL trong `.env`, sau đó chạy migration và tạo dữ liệu
-mẫu:
+Configure the variables in `.env`:
+
+| Variable | Purpose | Example |
+|---|---|---|
+| `DB_NAME` | Database name | `student_mgmt` |
+| `DB_USER` | Application database user | `sms_user` |
+| `DB_PASSWORD` | Application database password | Replace with a secure password |
+| `DB_ROOT_PASSWORD` | MySQL root password for Docker | Replace with a secure password |
+| `DB_HOST` | Database host | `127.0.0.1` |
+| `DB_PORT` | Database port | `3307` |
+| `SECRET_KEY` | Django secret key | Replace with a random value |
+| `DEBUG` | Django debug mode | `1` |
+
+Do not commit `.env` or real credentials.
+
+### Windows and mysqlclient
+
+If installing `mysqlclient` fails on Windows, install and enable PyMySQL:
+
+```powershell
+python -m pip install pymysql
+```
+
+The Django settings already attempt to load PyMySQL before connecting to
+MySQL.
+
+## Run Locally
+
+Make sure MySQL is running and the values in `.env` match your database.
+Then run:
 
 ```powershell
 python manage.py migrate
@@ -64,41 +101,41 @@ python manage.py seed
 python manage.py runserver
 ```
 
-Mở ứng dụng tại <http://127.0.0.1:8000/>.
+Open <http://127.0.0.1:8000/>.
 
-Nếu PowerShell chặn việc kích hoạt virtual environment, có thể chạy trực tiếp
-các lệnh bằng `py -3.12`, hoặc dùng:
+The seed command is repeatable and creates sample accounts, courses, semesters,
+course sections, registrations, and grades.
 
-```powershell
-.\.venv\Scripts\activate.bat
-```
+## Run with Docker Compose
 
-### Cấu hình database mặc định
-
-File `.env.example` dùng các giá trị sau:
-
-| Biến | Giá trị mặc định |
-|---|---|
-| `DB_NAME` | `student_mgmt` |
-| `DB_USER` | `sms_user` |
-| `DB_HOST` | `127.0.0.1` |
-| `DB_PORT` | `3307` |
-| `DEBUG` | `1` |
-
-Không commit file `.env` hoặc mật khẩu thật lên repository.
-
-## Chạy bằng Docker Compose
-
-Docker Compose khởi động MySQL và web app:
+Docker Compose starts MySQL and the web application:
 
 ```powershell
 Copy-Item .env.example .env
 docker compose up --build
 ```
 
-Sau khi các container sẵn sàng, mở <http://127.0.0.1:8000/>.
+- Web application: <http://127.0.0.1:8000/>
+- MySQL host port: `3307`
+- MySQL container port: `3306`
+- Database data: Docker volume `db_data`
 
-Các lệnh thường dùng:
+The web container waits for MySQL, applies migrations, and collects static
+files before starting Gunicorn.
+
+Create sample data manually if needed:
+
+```powershell
+docker compose exec web python manage.py seed --force
+```
+
+Reset existing sample passwords:
+
+```powershell
+docker compose exec web python manage.py seed --reset-passwords --force
+```
+
+Common container commands:
 
 ```powershell
 docker compose ps
@@ -107,58 +144,79 @@ docker compose stop
 docker compose down
 ```
 
-Muốn xóa cả dữ liệu MySQL trong volume, chỉ thực hiện khi chắc chắn không cần
-dữ liệu hiện tại:
+Use `docker compose down -v` only when you also want to delete all MySQL data
+stored in the Docker volume.
+
+## Sample Accounts
+
+The default seed password is `Pass1234`:
+
+| Account | Role |
+|---|---|
+| `AD001` | Administrator |
+| `GV001` | Teacher |
+| `100001` | Student |
+
+Create or refresh sample data locally:
 
 ```powershell
-docker compose down -v
+python manage.py seed
+python manage.py seed --reset-passwords
 ```
 
-## Tài khoản dữ liệu mẫu
+Use `--password` to select a different seed password.
 
-Lệnh `python manage.py seed` có thể chạy lại nhiều lần và tạo dữ liệu mẫu cho
-toàn bộ luồng chính. Mật khẩu mặc định của các tài khoản mẫu là `Pass1234`:
+## Testing
 
-| Tài khoản | Vai trò |
-|---|---|
-| `AD001` | Quản trị viên |
-| `GV001` | Giảng viên |
-| `100001` | Sinh viên |
-
-
-## Kiểm thử
-
-Chạy toàn bộ test:
+Run the complete test suite:
 
 ```powershell
 pytest
 ```
 
-Chạy một nhóm test cụ thể:
+Run a specific test package or file:
 
 ```powershell
 pytest accounts/tests
 pytest grades/tests/test_calculator.py
+pytest registration/tests/test_concurrency.py
+pytest search/tests/test_views.py
 ```
 
-Một số test được đánh dấu `skip` vì phụ thuộc vào phần triển khai chưa hoàn
-thành. Xem [docs/TEST_PLAN.md](docs/TEST_PLAN.md) để biết phạm vi và kế hoạch
-kiểm thử chéo.
+Check Django migrations:
 
-## Quy ước phát triển
+```powershell
+python manage.py makemigrations --check --dry-run
+python manage.py migrate
+```
 
-- Đọc [DECISIONS.md](DECISIONS.md) và [common/contract.py](common/contract.py)
-  trước khi thay đổi logic dùng chung.
-- Giữ nguyên tên hàm, tham số và cấu trúc dữ liệu đã được các app sử dụng.
-- Kiểm tra quyền ở phía server; không chỉ ẩn nút trên giao diện.
-- Các thay đổi số lượng đăng ký phải được thực hiện trong transaction và bảo
-  đảm an toàn khi có nhiều request đồng thời.
-- Thay đổi model phải đi kèm migration và test phù hợp.
-- Không đưa secret, file `.env`, dữ liệu cá nhân thật hoặc file build vào Git.
+Run Django system checks:
 
-## Tài liệu liên quan
+```powershell
+python manage.py check
+```
 
-- [Kế hoạch kiểm thử](docs/TEST_PLAN.md)
-- [Phân rã công việc](docs/WORK_BREAKDOWN.md)
-- [Các quyết định thiết kế](DECISIONS.md)
-- [Đặc tả và thiết kế hệ thống](../Requirement%20Specification%20and%20Design%20Document/)
+The testing plan and cross-review assignments are documented in:
+
+- [Test Plan](docs/TEST_PLAN.md)
+- [Work and Testing Breakdown](docs/WORK_BREAKDOWN.md)
+- [Test Case Spreadsheet](Test_Cases_Student_Management.xlsx)
+
+## Development Guidelines
+
+- Read [DECISIONS.md](DECISIONS.md) and
+  [common/contract.py](common/contract.py) before changing shared rules.
+- Check permissions on the server; do not rely only on hiding interface controls.
+- Use transactions and atomic updates when changing course-section capacity.
+- Include migrations and tests for every model change.
+- Do not commit `.env`, secrets, real personal data, or build artifacts.
+- Follow the grade, prerequisite, status-transition, and gradebook-lock rules
+  in `DECISIONS.md`.
+
+## Project Documentation
+
+- [Project Overview](../README.md)
+- [System Requirements](../Requirement%20Specification%20and%20Design%20Document/Stage%201/System%20Requirement%20Specification%20Student%20Management%20System.pdf)
+- [Design Decisions](DECISIONS.md)
+- [Test Plan](docs/TEST_PLAN.md)
+- [Work Breakdown](docs/WORK_BREAKDOWN.md)
