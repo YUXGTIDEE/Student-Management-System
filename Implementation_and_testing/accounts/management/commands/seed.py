@@ -1,3 +1,4 @@
+
 """python manage.py seed  (BE1)  – tạo dữ liệu mẫu cho cả nhóm.
 
 Chạy lại bao nhiêu lần cũng được: dữ liệu đã có thì được cập nhật chứ không nhân đôi.
