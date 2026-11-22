@@ -9,9 +9,32 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3307:3306"
+      - "3307:3306"        # máy bạn dùng cổng 3307 để xem bằng DBeaver; trong Docker web gọi db:3306
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build: .
+    container_name: sms_web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DB_HOST: db            # ghi đè 127.0.0.1 trong .env
+      DB_PORT: "3306"
+      DEBUG: "0"
+      SEED_ON_START: "1"     # lần đầu tự nạp dữ liệu mẫu; đổi thành 0 khi chạy thật
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
+    ports:
+      - "8000:8000"
+
 volumes:
   db_data:

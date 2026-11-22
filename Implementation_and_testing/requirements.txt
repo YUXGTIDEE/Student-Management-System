@@ -1,6 +1,8 @@
 Django>=5.0,<5.3
 mysqlclient>=2.2        # Windows lỗi cài: đổi thành pymysql
+python-dotenv
+gunicorn
+whitenoise
 pytest
 pytest-django
 locust
-python-dotenv

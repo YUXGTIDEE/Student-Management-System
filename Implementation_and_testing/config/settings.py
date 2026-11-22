@@ -1,13 +1,17 @@
-"""config/settings.py (Hoa Binh). Cấu hình đọc từ biến môi trường (.env)."""
+"""config/settings.py (BE1). Cấu hình đọc từ biến môi trường (.env)."""
 import os
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent 
-from dotenv import load_dotenv
-load_dotenv(BASE_DIR / ".env")
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+try:                                    # đọc file .env (DB_PASSWORD, EMAIL_*...) trước khi các dòng bên dưới dùng os.environ
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / ".env")
+except ImportError:                     # chưa cài python-dotenv: chỉ dùng biến môi trường của hệ điều hành
+    pass
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me")
 DEBUG = os.environ.get("DEBUG", "1") == "1"
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get("ALLOWED_HOSTS", "*").split(",") if h.strip()]
 
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
@@ -16,6 +20,7 @@ INSTALLED_APPS = [
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",   # phục vụ file tĩnh (CSS/JS) khi chạy gunicorn
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -55,9 +60,20 @@ DATABASES = {"default": {
     "OPTIONS": {"charset": "utf8mb4"},
 }}
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.PBKDF2PasswordHasher"]  # mật khẩu lưu dạng băm
+
+# Email (quên mật khẩu). Mặc định: in email ra terminal chạy runserver, không gửi đi đâu cả.
+# Dùng Mailpit hoặc Gmail bằng cách đặt các biến EMAIL_* trong .env (xem .env.example).
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "127.0.0.1")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "1025"))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "0") == "1"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Student Management <no-reply@sms.local>")
 LANGUAGE_CODE = "vi"
 TIME_ZONE = "Asia/Bangkok"
 USE_TZ = True
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "static"]   # static/sms/app.css, app.js
+STATIC_ROOT = BASE_DIR / "staticfiles"     # nơi collectstatic gom file (dùng trong Docker)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
