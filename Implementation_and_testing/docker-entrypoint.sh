@@ -20,7 +20,7 @@ python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
 # Chỉ nạp dữ liệu mẫu khi bật SEED_ON_START=1 (lệnh seed an toàn khi chạy lại)
-if [ "$SEED_ON_START" = "0" ]; then
+if [ "$SEED_ON_START" = "1" ]; then
   python manage.py seed --force
 fi
 
